@@ -1,35 +1,51 @@
 import React from "react";
 import { cn } from "../../utils/cn";
+
 const Input = React.forwardRef(
   ({ className, label, error, leftIcon, rightBadge, hint, type, id, ...props }, ref) => {
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : void 0);
-    return /* @__PURE__ */ React.createElement("div", { className: "w-full space-y-1" }, label && /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ React.createElement(
-      "label",
-      {
-        htmlFor: inputId,
-        className: "block font-label-sm text-label-sm text-on-surface uppercase tracking-wider font-semibold"
-      },
-      label
-    ), hint && /* @__PURE__ */ React.createElement("span", { className: "font-code-sm text-code-sm text-outline" }, hint)), /* @__PURE__ */ React.createElement("div", { className: "relative flex items-center" }, leftIcon && /* @__PURE__ */ React.createElement("div", { className: "absolute left-3 flex items-center pointer-events-none text-outline" }, leftIcon), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        id: inputId,
-        type,
-        ref,
-        className: cn(
-          "w-full h-9 px-3 bg-surface-container-lowest text-on-surface font-body-md text-body-md border border-outline-variant rounded transition-colors placeholder:text-outline",
-          "focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary",
-          leftIcon && "pl-9",
-          rightBadge && "pr-12",
-          error && "border-error focus:border-error focus:ring-error",
-          className
-        ),
-        ...props
-      }
-    ), rightBadge && /* @__PURE__ */ React.createElement("div", { className: "absolute right-2.5 flex items-center" }, rightBadge)), error && /* @__PURE__ */ React.createElement("p", { className: "font-body-sm text-body-sm text-error mt-0.5" }, error));
+    return (
+      <div className="w-full space-y-1.5">
+        {label && (
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor={inputId}
+              className="block font-mono text-[11px] text-[#9ca3af] uppercase tracking-wider font-semibold"
+            >
+              {label}
+            </label>
+            {hint && <span className="font-mono text-[10px] text-[#64748b]">{hint}</span>}
+          </div>
+        )}
+        <div className="relative flex items-center">
+          {leftIcon && (
+            <div className="absolute left-3 flex items-center pointer-events-none text-[#64748b]">
+              {leftIcon}
+            </div>
+          )}
+          <input
+            id={inputId}
+            type={type}
+            ref={ref}
+            className={cn(
+              "w-full h-9 px-3 bg-[#101317] text-[#f3f4f6] text-xs border border-[#222731] rounded-md transition-colors placeholder:text-[#64748b]",
+              "focus:outline-none focus:border-[#9cae9b] focus:ring-1 focus:ring-[#9cae9b]/30",
+              leftIcon && "pl-9",
+              rightBadge && "pr-12",
+              error && "border-[#d97768] focus:border-[#d97768] focus:ring-[#d97768]/20",
+              className
+            )}
+            {...props}
+          />
+          {rightBadge && <div className="absolute right-2.5 flex items-center">{rightBadge}</div>}
+        </div>
+        {error && <p className="text-[11px] text-[#d97768] mt-1">{error}</p>}
+      </div>
+    );
   }
 );
+
 Input.displayName = "Input";
-export {
-  Input
-};
+export { Input };
+export default Input;
+

@@ -1,104 +1,230 @@
 import React, { useState } from "react";
-import { mockLeads } from "@/constants/mockData";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { useParams, useNavigate } from "react-router-dom";
 import {
-  CheckSquare,
-  ShieldCheck,
-  Send,
-  XCircle,
-  CheckCircle,
-  Brain,
-  Scale
+  ChevronRight,
+  FileText,
+  Clock,
+  ArrowLeft,
+  CheckCircle2,
+  AlertTriangle,
+  Users
 } from "lucide-react";
-const LeadPrioritizationPage = () => {
-  const [leads, setLeads] = useState(mockLeads);
-  const [selectedLead, setSelectedLead] = useState(mockLeads[0]);
-  const [showFRE902Reasoning, setShowFRE902Reasoning] = useState(true);
-  const [triageActionMessage, setTriageActionMessage] = useState(null);
-  const handleTriageAction = (action) => {
-    setTriageActionMessage(`ACTION EXECUTED: ${action} for ${selectedLead.leadNumber}. Signed and logged to Merkle block.`);
-    setTimeout(() => setTriageActionMessage(null), 4e3);
+import toast from "react-hot-toast";
+import Button from "../../components/ui/Button";
+import Badge from "../../components/ui/Badge";
+
+export const LeadPrioritizationPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [leadStatus, setLeadStatus] = useState("New");
+
+  const handleAction = (status, label) => {
+    setLeadStatus(status);
+    toast.success(`Lead ${label} — Action logged to audit trail`);
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "space-y-6 max-w-7xl mx-auto font-mono" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-tactical-neutral-200 dark:border-tactical-neutral-800" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 text-tactical-neutral-500 text-[11px] uppercase tracking-wider mb-0.5" }, /* @__PURE__ */ React.createElement("span", null, "EXPLAINABLE ALGORITHMIC TRIAGE"), /* @__PURE__ */ React.createElement("span", null, "/"), /* @__PURE__ */ React.createElement("span", { className: "text-tactical-success-600 font-semibold" }, "FRE 902 TRANSPARENT EVIDENCE")), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl font-bold tracking-tight text-tactical-neutral-900 dark:text-tactical-neutral-100" }, "Explainable Lead Prioritization & Case Triage")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(
-    Button,
-    {
-      variant: "secondary",
-      size: "sm",
-      onClick: () => setShowFRE902Reasoning(!showFRE902Reasoning),
-      icon: /* @__PURE__ */ React.createElement(Scale, { className: "w-4 h-4 text-tactical-primary-600" })
-    },
-    showFRE902Reasoning ? "Hide FRE 902 Factors" : "Show FRE 902 Factors"
-  ))), triageActionMessage && /* @__PURE__ */ React.createElement("div", { className: "p-3 bg-tactical-success-50 dark:bg-tactical-success-950/80 border border-tactical-success-300 dark:border-tactical-success-800 rounded flex items-center justify-between text-xs text-tactical-success-800 dark:text-tactical-success-200" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(CheckCircle, { className: "w-4 h-4 text-tactical-success-600" }), /* @__PURE__ */ React.createElement("span", null, triageActionMessage)), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] uppercase font-bold text-tactical-success-600" }, "MERKLE ROOT UPDATED")), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-12 gap-6" }, /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-5 space-y-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-xs pb-1" }, /* @__PURE__ */ React.createElement("span", { className: "font-bold text-tactical-neutral-900 dark:text-tactical-neutral-100 uppercase" }, "Triage Priority Queue"), /* @__PURE__ */ React.createElement("span", { className: "text-[11px] text-tactical-neutral-500" }, leads.length, " LEADS GENERATED")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2.5" }, leads.map((lead) => {
-    const isSelected = selectedLead.id === lead.id;
-    return /* @__PURE__ */ React.createElement(
-      "div",
-      {
-        key: lead.id,
-        onClick: () => setSelectedLead(lead),
-        className: `p-4 rounded border cursor-pointer transition-all ${isSelected ? "bg-tactical-primary-50 dark:bg-tactical-primary-950/70 border-tactical-primary-500 shadow-xs" : "bg-white dark:bg-tactical-neutral-900 border-tactical-neutral-200 dark:border-tactical-neutral-800 hover:border-tactical-neutral-400"}`
-      },
-      /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1.5" }, /* @__PURE__ */ React.createElement("span", { className: "text-xs font-bold text-tactical-neutral-900 dark:text-tactical-neutral-100" }, lead.leadNumber), /* @__PURE__ */ React.createElement(
-        Badge,
-        {
-          variant: lead.confidenceScore >= 90 ? "danger" : "warning",
-          size: "sm"
-        },
-        lead.confidenceScore,
-        "% AI Confidence"
-      )),
-      /* @__PURE__ */ React.createElement("h3", { className: "text-xs font-semibold text-tactical-neutral-800 dark:text-tactical-neutral-200 mb-1" }, lead.headline),
-      /* @__PURE__ */ React.createElement("p", { className: "text-[11px] text-tactical-neutral-500 font-sans line-clamp-2 leading-relaxed" }, lead.rationale),
-      /* @__PURE__ */ React.createElement("div", { className: "pt-2 mt-2 border-t border-tactical-neutral-100 dark:border-tactical-neutral-800 flex justify-between items-center text-[10px] text-tactical-neutral-400" }, /* @__PURE__ */ React.createElement("span", null, "ACTION: ", lead.recommendedAction), /* @__PURE__ */ React.createElement("span", null, "Assigned: ", lead.assignedTo.split(" ")[0]))
-    );
-  }))), /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-7 space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "p-5 bg-white dark:bg-tactical-neutral-900 rounded border border-tactical-neutral-200 dark:border-tactical-neutral-800 space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-start justify-between pb-3 border-b border-tactical-neutral-200 dark:border-tactical-neutral-800" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("span", { className: "text-[10px] uppercase text-tactical-neutral-500 block mb-0.5" }, "SELECTED EVIDENTIARY LEAD"), /* @__PURE__ */ React.createElement("h2", { className: "text-base font-bold text-tactical-neutral-900 dark:text-tactical-neutral-100" }, selectedLead.headline), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-tactical-neutral-500 mt-0.5" }, "LEAD ID: ", selectedLead.leadNumber, " \u2022 ASSIGNED: ", selectedLead.assignedTo)), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("span", { className: "text-[10px] uppercase text-tactical-neutral-500 block" }, "Calculated Confidence"), /* @__PURE__ */ React.createElement("span", { className: "text-2xl font-black text-tactical-danger-600" }, selectedLead.confidenceScore, "%"))), /* @__PURE__ */ React.createElement("div", { className: "space-y-1" }, /* @__PURE__ */ React.createElement("span", { className: "text-[11px] font-bold uppercase text-tactical-neutral-700 dark:text-tactical-neutral-300" }, "Evidentiary Rationale & Probable Cause Synthesis"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-tactical-neutral-600 dark:text-tactical-neutral-400 font-sans leading-relaxed" }, selectedLead.rationale)), showFRE902Reasoning && /* @__PURE__ */ React.createElement("div", { className: "p-4 bg-tactical-neutral-50 dark:bg-tactical-neutral-950 rounded border border-tactical-neutral-300 dark:border-tactical-neutral-800 space-y-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-xs font-bold uppercase text-tactical-neutral-900 dark:text-tactical-neutral-100" }, /* @__PURE__ */ React.createElement(Brain, { className: "w-4 h-4 text-tactical-primary-600" }), /* @__PURE__ */ React.createElement("span", null, "FRE 902(14) Transparent Algorithmic Factor Weights")), /* @__PURE__ */ React.createElement(Badge, { variant: "outline", size: "sm" }, "COURT ADMISSIBLE")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 text-xs" }, selectedLead.confidenceFactors.map((factor, idx) => /* @__PURE__ */ React.createElement("div", { key: idx, className: "space-y-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between text-[11px]" }, /* @__PURE__ */ React.createElement("span", { className: "text-tactical-neutral-700 dark:text-tactical-neutral-300 font-semibold" }, factor.factor), /* @__PURE__ */ React.createElement("span", { className: "text-tactical-primary-600 font-bold" }, "+", factor.weight, "%")), /* @__PURE__ */ React.createElement("div", { className: "w-full bg-tactical-neutral-200 dark:bg-tactical-neutral-800 h-1.5 rounded-full overflow-hidden" }, /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      className: "bg-tactical-primary-600 h-full rounded-full",
-      style: { width: `${factor.weight * 2.5}%` }
-    }
-  )), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] text-tactical-neutral-500 font-sans block" }, factor.source))))), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 pt-2 border-t border-tactical-neutral-200 dark:border-tactical-neutral-800" }, /* @__PURE__ */ React.createElement("span", { className: "text-[11px] font-bold uppercase text-tactical-neutral-700 dark:text-tactical-neutral-300 block" }, "Recommended Triage Protocol"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" }, /* @__PURE__ */ React.createElement(
-    Button,
-    {
-      variant: "primary",
-      size: "sm",
-      onClick: () => handleTriageAction("Issue 18 U.S.C. \xA7 2703(d) Intercept Order"),
-      icon: /* @__PURE__ */ React.createElement(Send, { className: "w-3.5 h-3.5" }),
-      className: "w-full justify-center text-[11px]"
-    },
-    "Approve Warrant Affidavit"
-  ), /* @__PURE__ */ React.createElement(
-    Button,
-    {
-      variant: "secondary",
-      size: "sm",
-      onClick: () => handleTriageAction("Dispatch Mobile Tactical Intercept Unit"),
-      icon: /* @__PURE__ */ React.createElement(CheckSquare, { className: "w-3.5 h-3.5" }),
-      className: "w-full justify-center text-[11px]"
-    },
-    "Dispatch Field Surveillance"
-  ), /* @__PURE__ */ React.createElement(
-    Button,
-    {
-      variant: "secondary",
-      size: "sm",
-      onClick: () => handleTriageAction("Route to FinCEN Forensic Unit"),
-      icon: /* @__PURE__ */ React.createElement(ShieldCheck, { className: "w-3.5 h-3.5" }),
-      className: "w-full justify-center text-[11px]"
-    },
-    "Refer to FinCEN Task Force"
-  ), /* @__PURE__ */ React.createElement(
-    Button,
-    {
-      variant: "danger",
-      size: "sm",
-      onClick: () => handleTriageAction("Archived / Unfounded"),
-      icon: /* @__PURE__ */ React.createElement(XCircle, { className: "w-3.5 h-3.5" }),
-      className: "w-full justify-center text-[11px]"
-    },
-    "Dismiss Lead as Noise"
-  )))))));
+
+  return (
+    <div className="space-y-4 max-w-7xl mx-auto">
+      {/* Header matching LeadDetail.jpeg */}
+      <div className="space-y-0.5">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate("/leads")}
+            className="text-xs text-[#8d98a5] hover:text-white flex items-center gap-1 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Leads</span>
+          </button>
+          <span className="text-xs text-[#6c7682]">/</span>
+          <span className="text-xs font-mono text-white">LD-8821</span>
+          <span className="text-xs text-[#6c7682]">·</span>
+          <span className="text-xs text-[#8d98a5]">Created Nov 24</span>
+          <span className="text-xs text-[#6c7682]">·</span>
+          <span className="text-xs text-[#8fa38d] font-mono">Confidence 94%</span>
+        </div>
+        <h1 className="text-xl font-medium text-white tracking-tight pt-1">
+          LD-8821 · Shared identifier pattern
+        </h1>
+      </div>
+
+      {/* 2-Column Grid Layout matching LeadDetail.jpeg */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        {/* Left Primary Column (8 Cols) */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* Main Lead Summary Card */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#18261c] text-[#8fa38d]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8fa38d]" />
+                  {leadStatus}
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#281c1c] text-[#dc7869]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#dc7869]" />
+                  High Severity
+                </span>
+              </div>
+              <span className="text-sm font-mono font-medium text-[#8fa38d]">94%</span>
+            </div>
+
+            <div>
+              <h2 className="text-base font-medium text-white leading-snug">
+                Same phone identifier links 3 entities across invoices, leases and gate logs.
+              </h2>
+              <p className="text-xs text-[#8d98a5] mt-2 leading-relaxed">
+                +1 (415) 555-0132 appears on Meridian invoice batch #4471, the Northgate Unit 4 lease co-signed by J. Thorne, and the Pier 41 gate log for truck 7XQ-4419 — all within a 72-hour window. Pattern strength is high; alternate explanations (shared dispatcher line) not yet excluded.
+              </p>
+            </div>
+
+            <div className="p-2.5 bg-[#101317] border border-[#222731] rounded text-[11px] text-[#8fa38d] font-sans">
+              AI-generated investigative signal — requires investigator verification.
+            </div>
+          </div>
+
+          {/* Supporting Evidence Card */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 space-y-3 shadow-sm">
+            <div className="text-xs font-medium text-white">Supporting evidence</div>
+
+            <div className="divide-y divide-[#222731] text-xs">
+              <div
+                onClick={() => navigate("/evidence")}
+                className="py-3 flex items-center justify-between hover:text-white text-[#d1d7df] cursor-pointer group transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-4 h-4 text-[#6c7682] group-hover:text-[#9cae9b] transition-colors" />
+                  <span className="font-mono text-[#8d98a5]">EV-5498</span>
+                  <span>Invoice batch #4471 · Pending</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#6c7682] group-hover:text-white transition-colors" />
+              </div>
+
+              <div
+                onClick={() => navigate("/evidence")}
+                className="py-3 flex items-center justify-between hover:text-white text-[#d1d7df] cursor-pointer group transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-4 h-4 text-[#6c7682] group-hover:text-[#9cae9b] transition-colors" />
+                  <span className="font-mono text-[#8d98a5]">EV-5441</span>
+                  <span>Lease agreement · Verified</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#6c7682] group-hover:text-white transition-colors" />
+              </div>
+
+              <div
+                onClick={() => navigate("/evidence")}
+                className="py-3 flex items-center justify-between hover:text-white text-[#d1d7df] cursor-pointer group transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-4 h-4 text-[#6c7682] group-hover:text-[#9cae9b] transition-colors" />
+                  <span className="font-mono text-[#8d98a5]">EV-5521</span>
+                  <span>Gate log export · Verified</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#6c7682] group-hover:text-white transition-colors" />
+              </div>
+            </div>
+          </div>
+
+          {/* Related Timeline + Locations Card */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 space-y-3 shadow-sm">
+            <div className="text-xs font-medium text-white">Related timeline + locations</div>
+
+            <div className="divide-y divide-[#222731] text-xs text-[#8d98a5]">
+              <div className="py-2.5 hover:text-white cursor-pointer transition-colors" onClick={() => navigate("/timeline")}>
+                Nov 18 · Call cluster — 14 calls in 72h
+              </div>
+              <div className="py-2.5 hover:text-white cursor-pointer transition-colors" onClick={() => navigate("/timeline")}>
+                Nov 21 · Invoice batch flagged
+              </div>
+              <div className="py-2.5 hover:text-white cursor-pointer transition-colors" onClick={() => navigate("/timeline")}>
+                Nov 24 · Night access — Pier 41, Unit 9
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar Column (4 Cols) */}
+        <div className="lg:col-span-4 space-y-4">
+          {/* Related Entities Card */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 space-y-3 shadow-sm">
+            <div className="text-xs font-medium text-white">Related entities</div>
+
+            <div className="divide-y divide-[#222731] text-xs">
+              <div
+                onClick={() => navigate("/entities/poi-1")}
+                className="py-2.5 flex items-center justify-between hover:text-white text-[#d1d7df] cursor-pointer group transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#6c7682]" />
+                  <span>A. Kovacs</span>
+                </div>
+                <span className="text-[#6c7682]">Person</span>
+              </div>
+
+              <div
+                onClick={() => navigate("/entities/poi-2")}
+                className="py-2.5 flex items-center justify-between hover:text-white text-[#d1d7df] cursor-pointer group transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#6c7682]" />
+                  <span>J. Thorne</span>
+                </div>
+                <span className="text-[#6c7682]">Person</span>
+              </div>
+
+              <div
+                onClick={() => navigate("/entities/org-1")}
+                className="py-2.5 flex items-center justify-between hover:text-white text-[#d1d7df] cursor-pointer group transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#6c7682]" />
+                  <span>Meridian Holdings</span>
+                </div>
+                <span className="text-[#6c7682]">Organization</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Investigator Actions Card */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 space-y-3 shadow-sm">
+            <div className="text-xs font-medium text-white">Investigator actions</div>
+
+            <div className="space-y-2">
+              <Button
+                variant="secondary"
+                className="w-full justify-center text-xs"
+                onClick={() => handleAction("Under Review", "marked Under Review")}
+              >
+                Mark under review
+              </Button>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="primary"
+                  className="w-full justify-center text-xs"
+                  onClick={() => handleAction("Verified", "verified")}
+                >
+                  Verify
+                </Button>
+
+                <Button
+                  variant="danger"
+                  className="w-full justify-center text-xs"
+                  onClick={() => handleAction("Dismissed", "dismissed")}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-[#6c7682] leading-normal pt-1">
+              Verify and Dismiss require confirmation and are written to the audit trail.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
-export {
-  LeadPrioritizationPage
-};
+
+export default LeadPrioritizationPage;

@@ -1,23 +1,112 @@
 import React from "react";
-import { X, Database, Cpu, Lock, Server } from "lucide-react";
-const SystemStatusModal = ({ isOpen, onClose }) => {
+import { X, Database, Cpu, Lock, Server, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+
+export const SystemStatusModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
-  return /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/85 backdrop-blur-md select-none" }, /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-lg bg-[#0D1B2A] border border-[#263B55] rounded-xl shadow-2xl overflow-hidden font-sans" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#07111F] px-5 py-4 border-b border-[#263B55] flex items-center justify-between" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2.5" }, /* @__PURE__ */ React.createElement("div", { className: "w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" }), /* @__PURE__ */ React.createElement("h3", { className: "font-bold text-sm text-white font-mono uppercase tracking-wider" }, "INTELLITRACK SYSTEM OPERATIONAL STATUS")), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: onClose,
-      className: "p-1.5 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#101F33] transition-colors"
-    },
-    /* @__PURE__ */ React.createElement(X, { className: "w-4 h-4" })
-  )), /* @__PURE__ */ React.createElement("div", { className: "p-5 space-y-4 text-xs font-mono" }, /* @__PURE__ */ React.createElement("div", { className: "p-3 rounded-lg bg-[#101F33] border border-[#263B55] flex items-center justify-between" }, /* @__PURE__ */ React.createElement("span", { className: "text-slate-300" }, "Overall System Health"), /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded bg-emerald-500/20 text-[#10B981] font-bold border border-emerald-500/30" }, "ALL SERVICES NOMINAL")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#94A3B8] uppercase tracking-wider" }, "Core Cluster Nodes"), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-2" }, /* @__PURE__ */ React.createElement("div", { className: "p-2.5 rounded bg-[#07111F] border border-[#263B55]" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-slate-400 mb-1" }, /* @__PURE__ */ React.createElement(Server, { className: "w-3.5 h-3.5 text-cyan-400" }), /* @__PURE__ */ React.createElement("span", null, "Graph Engine")), /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, "Neo4j Enterprise"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#10B981] mt-0.5" }, "Latency: 14ms \u2022 100% Synced")), /* @__PURE__ */ React.createElement("div", { className: "p-2.5 rounded bg-[#07111F] border border-[#263B55]" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-slate-400 mb-1" }, /* @__PURE__ */ React.createElement(Cpu, { className: "w-3.5 h-3.5 text-purple-400" }), /* @__PURE__ */ React.createElement("span", null, "AI NLP Extraction")), /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, "Transformer v4.8"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#10B981] mt-0.5" }, "Throughput: 420 docs/sec")), /* @__PURE__ */ React.createElement("div", { className: "p-2.5 rounded bg-[#07111F] border border-[#263B55]" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-slate-400 mb-1" }, /* @__PURE__ */ React.createElement(Database, { className: "w-3.5 h-3.5 text-blue-400" }), /* @__PURE__ */ React.createElement("span", null, "Evidentiary Vault")), /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, "Encrypted Shards"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#10B981] mt-0.5" }, "SHA-256 Validated")), /* @__PURE__ */ React.createElement("div", { className: "p-2.5 rounded bg-[#07111F] border border-[#263B55]" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 text-slate-400 mb-1" }, /* @__PURE__ */ React.createElement(Lock, { className: "w-3.5 h-3.5 text-amber-400" }), /* @__PURE__ */ React.createElement("span", null, "Security & CJIS")), /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, "Tier-3 Clearance"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#10B981] mt-0.5" }, "TLS 1.3 \u2022 FIPS 140-3")))), /* @__PURE__ */ React.createElement("div", { className: "p-3 rounded-lg bg-[#07111F] border border-[#263B55] space-y-1.5 text-[11px] text-[#94A3B8]" }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between" }, /* @__PURE__ */ React.createElement("span", null, "System Uptime:"), /* @__PURE__ */ React.createElement("span", { className: "text-slate-200 font-bold" }, "99.98% (Last 90 Days)")), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between" }, /* @__PURE__ */ React.createElement("span", null, "Indexed Entities:"), /* @__PURE__ */ React.createElement("span", { className: "text-slate-200 font-bold" }, "1,482 Entities")), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between" }, /* @__PURE__ */ React.createElement("span", null, "Mapped Relationships:"), /* @__PURE__ */ React.createElement("span", { className: "text-slate-200 font-bold" }, "5,839 Interconnections")), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between" }, /* @__PURE__ */ React.createElement("span", null, "Active Investigation Dockets:"), /* @__PURE__ */ React.createElement("span", { className: "text-slate-200 font-bold" }, "28 Active")))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#07111F] px-5 py-3 border-t border-[#263B55] flex justify-end" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: onClose,
-      className: "px-4 py-1.5 rounded-lg bg-[#2563EB] hover:bg-blue-600 text-white font-semibold transition-colors"
-    },
-    "Close"
-  ))));
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm select-none">
+      <div className="w-full max-w-lg bg-[#14171c] border border-[#222731] rounded-2xl shadow-2xl overflow-hidden font-sans">
+        <div className="bg-[#101317] px-5 py-4 border-b border-[#222731] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full bg-tactical-success-400 animate-pulse" />
+            <h3 className="font-bold text-xs text-white font-mono uppercase tracking-wider">
+              IntelliTrack System Health & Node Status
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-tactical-neutral-400 hover:text-white hover:bg-[#181d24] transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-4 text-xs font-mono">
+          <div className="p-3.5 rounded-xl bg-[#101317] border border-[#222731] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-tactical-success-400" />
+              <span className="text-tactical-neutral-300">Cluster Status</span>
+            </div>
+            <Badge variant="success" size="sm" className="font-mono text-[9px] uppercase">
+              ALL SERVICES NOMINAL
+            </Badge>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-[10px] text-tactical-neutral-500 uppercase tracking-wider">
+              Core Microservices & Pipelines
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="p-3 rounded-xl bg-[#101317] border border-[#222731]">
+                <div className="flex items-center gap-1.5 text-tactical-neutral-400 mb-1">
+                  <Server className="w-3.5 h-3.5 text-tactical-sage-400" />
+                  <span className="text-[11px]">Graph Engine</span>
+                </div>
+                <div className="text-white font-bold">Neo4j Enterprise</div>
+                <div className="text-[10px] text-tactical-success-400 mt-0.5">Latency: 14ms · Synced</div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#101317] border border-[#222731]">
+                <div className="flex items-center gap-1.5 text-tactical-neutral-400 mb-1">
+                  <Cpu className="w-3.5 h-3.5 text-tactical-sage-400" />
+                  <span className="text-[11px]">AI Extraction</span>
+                </div>
+                <div className="text-white font-bold">Transformer v4.8</div>
+                <div className="text-[10px] text-tactical-success-400 mt-0.5">420 docs/sec</div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#101317] border border-[#222731]">
+                <div className="flex items-center gap-1.5 text-tactical-neutral-400 mb-1">
+                  <Database className="w-3.5 h-3.5 text-tactical-sage-400" />
+                  <span className="text-[11px]">Vault Repository</span>
+                </div>
+                <div className="text-white font-bold">FRE 902 Shards</div>
+                <div className="text-[10px] text-tactical-success-400 mt-0.5">SHA-256 Validated</div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#101317] border border-[#222731]">
+                <div className="flex items-center gap-1.5 text-tactical-neutral-400 mb-1">
+                  <Lock className="w-3.5 h-3.5 text-tactical-warning-400" />
+                  <span className="text-[11px]">CJIS Compliance</span>
+                </div>
+                <div className="text-white font-bold">Level 4 Tier</div>
+                <div className="text-[10px] text-tactical-success-400 mt-0.5">FIPS 140-3 Active</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#101317] border border-[#222731] space-y-1.5 text-[11px] text-tactical-neutral-400">
+            <div className="flex justify-between">
+              <span>Overall Uptime:</span>
+              <span className="text-white font-bold">99.98% (Last 90 Days)</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Indexed Entities:</span>
+              <span className="text-tactical-sage-400 font-bold">1,482 Nodes</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Mapped Relationships:</span>
+              <span className="text-white font-bold">5,839 Edges</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-[#101317] px-5 py-3 border-t border-[#222731] flex justify-end">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onClose}
+            className="border-[#222731] text-xs"
+          >
+            Close
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 };
-export {
-  SystemStatusModal
-};
+
+export default SystemStatusModal;

@@ -7,31 +7,25 @@ import {
   Flame,
   ArrowRight,
   TrendingUp,
-  ShieldCheck,
-  Database,
   FileText,
   DollarSign,
   Camera,
   Globe,
-  History,
-  Sparkles,
-  Cpu,
-  MapPin,
-  Calendar,
-  CreditCard,
-  Phone,
-  CheckCircle2,
-  AlertTriangle,
+  Plus,
   HelpCircle,
   Loader2,
   Activity,
+  CheckCircle2,
+  AlertTriangle,
+  Download,
+  Calendar,
+  Layers,
+  ChevronRight
 } from "lucide-react";
 import {
   ResponsiveContainer,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -43,31 +37,89 @@ import {
 import { WhyThisLeadModal } from "@/components/common/WhyThisLeadModal";
 import { useGetDashboardSummaryQuery, useGetRecentActivityQuery } from "@/store/api/apiSlice";
 
-const DEFAULT_ACTIVITY_DATA = [
-  { day: "Day 01", communications: 45, transactions: 12, sightings: 8 },
-  { day: "Day 05", communications: 62, transactions: 19, sightings: 14 },
-  { day: "Day 10", communications: 98, transactions: 35, sightings: 22 },
-  { day: "Day 15", communications: 145, transactions: 52, sightings: 39 },
-  { day: "Day 20", communications: 110, transactions: 44, sightings: 28 },
-  { day: "Day 25", communications: 185, transactions: 78, sightings: 48 },
-  { day: "Day 30", communications: 160, transactions: 65, sightings: 42 },
+const ACTIVITY_PULSE_DATA = [
+  { day: "01 Mar", comms: 45, wires: 12, sightings: 8 },
+  { day: "05 Mar", comms: 68, wires: 19, sightings: 14 },
+  { day: "10 Mar", comms: 110, wires: 35, sightings: 22 },
+  { day: "15 Mar", comms: 155, wires: 52, sightings: 39 },
+  { day: "20 Mar", comms: 120, wires: 44, sightings: 28 },
+  { day: "25 Mar", comms: 195, wires: 78, sightings: 48 },
+  { day: "30 Mar", comms: 165, wires: 65, sightings: 42 },
 ];
 
-const DEFAULT_ENTITY_DISTRIBUTION = [
-  { name: "People (POI)", count: 482, color: "#2563EB" },
-  { name: "Phones (CDR)", count: 390, color: "#06B6D4" },
-  { name: "Organizations", count: 184, color: "#8B5CF6" },
-  { name: "Vehicles", count: 142, color: "#10B981" },
-  { name: "Locations", count: 168, color: "#F59E0B" },
-  { name: "Transactions", count: 116, color: "#3B82F6" },
+const ENTITY_DISTRIBUTION = [
+  { name: "People (POI)", count: 482, color: "#9cae9b" },
+  { name: "Phone CDRs", count: 390, color: "#7a8ba8" },
+  { name: "Shell Orgs", count: 184, color: "#c4a265" },
+  { name: "Vehicles", count: 142, color: "#8fa38d" },
+  { name: "Locations", count: 168, color: "#d97768" },
+  { name: "Wires", count: 116, color: "#52627d" },
 ];
 
-const DEFAULT_RELATIONSHIP_TYPES = [
-  { type: "Communication", count: 2180 },
-  { type: "Financial Transfer", count: 1420 },
-  { type: "Co-Location", count: 1150 },
-  { type: "Org / Shell Owner", count: 680 },
-  { type: "Vehicle Association", count: 409 },
+const RECENT_CASES = [
+  {
+    id: "CASE-2024-884",
+    title: "Hawala Network Syndicate Alpha",
+    lead: "M. Kessler (Lead)",
+    entities: 28,
+    status: "Active",
+    statusVariant: "active",
+    lastActivity: "12m ago",
+  },
+  {
+    id: "CASE-2024-871",
+    title: "Port Pier 42 Freight Transshipment",
+    lead: "S. Tanaka",
+    entities: 19,
+    status: "Under Review",
+    statusVariant: "warning",
+    lastActivity: "2h ago",
+  },
+  {
+    id: "CASE-2024-850",
+    title: "Shell Company Capital Flight",
+    lead: "A. Rossi",
+    entities: 34,
+    status: "Active",
+    statusVariant: "active",
+    lastActivity: "1d ago",
+  },
+  {
+    id: "CASE-2024-812",
+    title: "Maritime Contraband Corridor",
+    lead: "V. Sterling",
+    entities: 12,
+    status: "Monitoring",
+    statusVariant: "neutral",
+    lastActivity: "3d ago",
+  },
+];
+
+const PRIORITY_LEADS_LIST = [
+  {
+    id: "LEAD-024",
+    title: "Pier 42 Hotspot Rendezvous & Wire Execution",
+    entity: "Raj Mehta ↔ Vikramaditya Singhania",
+    reason: "ALPR optical vehicle scan matches phone tower burst 14 min prior to $142k wire transfer.",
+    severity: "CRITICAL",
+    confidence: 87,
+  },
+  {
+    id: "LEAD-021",
+    title: "SIM Rotation & Burner IMEI Handoff",
+    entity: "Raj Mehta (+91 98201 44921)",
+    reason: "New prepaid IMSI activated on handset IMEI previously associated with shell broker terminal.",
+    severity: "HIGH",
+    confidence: 94,
+  },
+  {
+    id: "LEAD-019",
+    title: "Offshore Shell Escrow Inflow",
+    entity: "BlueStar Logistics Pvt. Ltd.",
+    reason: "Inter-account transit wire from Astraea Trading without accompanying freight manifests.",
+    severity: "MEDIUM",
+    confidence: 79,
+  },
 ];
 
 const DEMO_EXPLAINABILITY = {
@@ -80,7 +132,7 @@ const DEMO_EXPLAINABILITY = {
     "✓ Shared phone number & IMEI rotation",
     "✓ Repeated location overlap at Pier 42",
     "✓ Related transaction ($142,000 NEFT)",
-    "✓ Connected case records (CASE-2026-NIGHTSHADE)",
+    "✓ Connected case records (CASE-2024-884)",
   ],
   supportingRelationships: [
     {
@@ -104,58 +156,15 @@ const DEMO_EXPLAINABILITY = {
       confidence: 99,
       status: "VERIFIED",
     },
-    {
-      source: "BlueStar Logistics Pvt. Ltd.",
-      target: "Astraea Trading Corp",
-      relationship: "Inter-Company Wire Transit",
-      confidence: 89,
-      status: "REVIEW_REQUIRED",
-    },
-  ],
-  dataSources: [
-    {
-      type: "Call Detail Record (CDR)",
-      recordId: "CDR-2026-03-12-8821",
-      date: "2026-03-12 14:22 UTC",
-      snippet: "Encrypted VoLTE burst from burner phone to Hawala broker terminal prior to meeting.",
-    },
-    {
-      type: "FIR / Police Report",
-      recordId: "FIR No. 2026/098 (Crime Branch)",
-      date: "2026-02-18 10:00 UTC",
-      snippet: "Named in maritime contraband logistics docket under Sections 420 & 120B IPC.",
-    },
-    {
-      type: "Financial Ledger",
-      recordId: "RTGS-TRX-9902148",
-      date: "2026-03-11 16:45 UTC",
-      snippet: "$142,000 remitted through shell company account to BlueStar Logistics freight escrow.",
-    },
-  ],
-  matchingAttributes: [
-    { attribute: "Handset IMEI", value: "86129480112948", matchType: "Exact Hardware Match", weight: "High" },
-    { attribute: "Toll FastTag ID", value: "TAG-MH01-9921", matchType: "Corroborated Plate Hit", weight: "High" },
-    { attribute: "Shell Director DIN", value: "DIN-00928174", matchType: "Registrar of Companies Match", weight: "Medium" },
-  ],
-  graphSignals: [
-    { metric: "Betweenness Centrality", score: "0.89 (Top 1%)", description: "Acts as sole bridge between logistics cluster and offshore capital cluster." },
-    { metric: "Jaccard Co-Occurrence", score: "0.74", description: "High probability of co-presence across 7 distinct investigation incidents." },
-    { metric: "Shortest Path Distance", score: "1 Hop", description: "Direct communication confirmed through telecom cell tower handoff." },
-  ],
-  timelineEvidence: [
-    { time: "14:15 UTC", event: "Burner SIM dials Vikramaditya Singhania", overlapWindow: "T - 15m" },
-    { time: "14:30 UTC", event: "Audi A8 passes JNPT Port Toll Plaza", overlapWindow: "T + 0m (Event)" },
-    { time: "14:45 UTC", event: "Bank Wire $142,000 confirmed executed", overlapWindow: "T + 15m" },
   ],
 };
 
 const CockpitDashboardPage = () => {
   const navigate = useNavigate();
   const [selectedExplainLead, setSelectedExplainLead] = useState(null);
-  const [activeWorkflowStage, setActiveWorkflowStage] = useState(null);
+  const [timeRange, setTimeRange] = useState("30d");
 
-  const { data: summaryResponse, isLoading: isSummaryLoading, error: summaryError } = useGetDashboardSummaryQuery();
-  const { data: recentActivityResponse } = useGetRecentActivityQuery();
+  const { data: summaryResponse, isLoading: isSummaryLoading } = useGetDashboardSummaryQuery();
 
   const summary = summaryResponse?.data;
   const counts = summary?.counts || {
@@ -164,564 +173,429 @@ const CockpitDashboardPage = () => {
     totalEntities: 1482,
     totalRelationships: 5839,
     priorityLeads: 14,
-    totalEvidence: 124,
   };
 
-  const workflowStages = [
-    {
-      step: "01",
-      title: "COLLECT",
-      desc: "Ingest multi-source structured & unstructured records",
-      detail: "FIRs, CDR logs, wire transfers, OSINT, CCTV feeds",
-    },
-    {
-      step: "02",
-      title: "PROCESS",
-      desc: "Clean, normalize, tokenize & deduplicate records",
-      detail: "Noise filtering, timestamp unification, carrier normalization",
-    },
-    {
-      step: "03",
-      title: "EXTRACT",
-      desc: "Named Entity Recognition & OCR identification",
-      detail: "Entities, identifiers, phone numbers, addresses, vehicles",
-    },
-    {
-      step: "04",
-      title: "LINK",
-      desc: "Probabilistic record linkage & entity resolution",
-      detail: "Aliases, shared devices, co-locations, proxy ownerships",
-    },
-    {
-      step: "05",
-      title: "ANALYZE",
-      desc: "Graph topology, centrality & temporal clustering",
-      detail: "Betweenness scoring, syndicate hubs, co-presence detection",
-    },
-    {
-      step: "06",
-      title: "VISUALIZE",
-      desc: "Interactive link charts, geospatial trails & timelines",
-      detail: "Tactical vector map, force-directed graph, chronological playback",
-    },
-    {
-      step: "07",
-      title: "INVESTIGATE",
-      desc: "Sworn human verification & lead actioning",
-      detail: "Evidence dossiers, court-ready briefs, warrant affidavits",
-    },
-  ];
-
-  const dataSources = [
-    { title: "FIR / Police Reports", icon: FileText, color: "#2563EB", desc: "Case dockets, witness depositions, formal complaints" },
-    { title: "Call Detail Records", icon: Phone, color: "#06B6D4", desc: "Telecom tower azimuths, IMSI/IMEI logs, call bursts" },
-    { title: "Financial Records", icon: DollarSign, color: "#10B981", desc: "Bank wire slips, Hawala ledgers, shell account ledgers" },
-    { title: "Surveillance Reports", icon: Camera, color: "#F59E0B", desc: "ALPR optical scans, checkpoint logs, CCTV timepins" },
-    { title: "Social Media Intel", icon: Globe, color: "#8B5CF6", desc: "Open-source intelligence, digital footprint correlation" },
-    { title: "Criminal History", icon: History, color: "#EF4444", desc: "Prior convictions, state repository biometrics, warrants" },
-    { title: "Intelligence Reports", icon: ShieldCheck, color: "#0ea5e9", desc: "Cross-agency classified bulletins & taskforce intel" },
-  ];
-
   return (
-    <div className="space-y-8 max-w-7xl mx-auto font-sans pb-16">
-      {/* Hero Header */}
-      <div className="relative rounded-2xl bg-linear-to-b from-[#0D1B2A] via-[#101F33] to-[#07111F] border border-[#263B55] p-6 sm:p-10 overflow-hidden shadow-2xl">
-        <div className="absolute inset-0 pointer-events-none opacity-25">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="heroLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#2563EB" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#06B6D4" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#10B981" stopOpacity="0.2" />
-              </linearGradient>
-            </defs>
-            <line x1="15%" y1="20%" x2="40%" y2="35%" stroke="url(#heroLineGrad)" strokeWidth="1.5" strokeDasharray="4 4" />
-            <line x1="40%" y1="35%" x2="65%" y2="25%" stroke="url(#heroLineGrad)" strokeWidth="1.5" />
-            <line x1="65%" y1="25%" x2="85%" y2="50%" stroke="url(#heroLineGrad)" strokeWidth="1.5" strokeDasharray="6 3" />
-            <line x1="40%" y1="35%" x2="50%" y2="75%" stroke="url(#heroLineGrad)" strokeWidth="1.5" />
-            <line x1="50%" y1="75%" x2="75%" y2="80%" stroke="url(#heroLineGrad)" strokeWidth="1.5" strokeDasharray="3 3" />
-            <line x1="15%" y1="20%" x2="30%" y2="70%" stroke="url(#heroLineGrad)" strokeWidth="1" />
-            <circle cx="15%" cy="20%" r="5" fill="#2563EB" className="animate-pulse" />
-            <circle cx="40%" cy="35%" r="7" fill="#06B6D4" />
-            <circle cx="65%" cy="25%" r="5" fill="#10B981" />
-            <circle cx="85%" cy="50%" r="6" fill="#8B5CF6" />
-            <circle cx="50%" cy="75%" r="5" fill="#F59E0B" />
-            <circle cx="30%" cy="70%" r="4" fill="#2563EB" />
-            <circle cx="75%" cy="80%" r="5" fill="#06B6D4" />
-          </svg>
-        </div>
-
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs font-mono text-[#06B6D4]">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>AI-POWERED CRIMINAL NETWORK & INVESTIGATIVE INTELLIGENCE SYSTEM</span>
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-            Turn Fragmented Intelligence Into{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-[#2563EB] via-[#06B6D4] to-[#10B981]">
-              Connected Investigations
+    <div className="space-y-6 max-w-7xl mx-auto font-sans antialiased text-[#f3f4f6]">
+      {/* Top Header Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1 border-b border-[#1e232a]">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-white tracking-tight">
+              Investigation Overview
+            </h1>
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#18261c] text-[#8fa38d] border border-[#25392b]">
+              LIVE SYNDICATE
             </span>
-          </h1>
-          <p className="text-sm sm:text-base text-[#94A3B8] leading-relaxed">
-            IntelliTrack connects people, organizations, communications, transactions, locations and events into one explainable investigation intelligence platform.
+          </div>
+          <p className="text-xs text-[#9ca3af] mt-0.5">
+            Cross-jurisdictional intelligence summary, active syndicate nodes, and prioritized investigative leads.
           </p>
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
-              onClick={() => navigate("/cases")}
-              className="px-6 py-3 rounded-xl bg-[#2563EB] hover:bg-blue-600 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-500/25 flex items-center gap-2 group cursor-pointer"
-            >
-              <span>Explore Investigation</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => navigate("/network")}
-              className="px-6 py-3 rounded-xl bg-[#101F33] hover:bg-[#12243A] text-white border border-[#263B55] hover:border-[#06B6D4] font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <Share2 className="w-4 h-4 text-[#06B6D4]" />
-              <span>View Network Graph</span>
-            </button>
+        </div>
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+            className="h-8.5 px-3 bg-[#14171c] border border-[#222731] rounded-md text-xs text-[#d1d5db] focus:outline-none focus:border-[#9cae9b]"
+          >
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="90d">Last Quarter</option>
+            <option value="1y">All Time</option>
+          </select>
+
+          <button
+            onClick={() => navigate("/reports")}
+            className="h-8.5 px-3 rounded-md bg-[#14171c] border border-[#222731] hover:bg-[#181c22] text-[#d1d5db] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5 text-[#9ca3af]" />
+            <span>Export Dossier</span>
+          </button>
+
+          <button
+            onClick={() => navigate("/cases")}
+            className="h-8.5 px-3.5 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New Case</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 4 Top Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Active Cases */}
+        <div
+          onClick={() => navigate("/cases")}
+          className="bg-[#14171c] border border-[#222731] rounded-lg p-4 hover:border-[#2d3542] hover:bg-[#161a20] transition-all cursor-pointer group shadow-xs"
+        >
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#9ca3af] uppercase tracking-wider">
+            <span>Active Cases</span>
+            <Briefcase className="w-3.5 h-3.5 text-[#8fa38d] group-hover:text-white transition-colors" />
+          </div>
+          <div className="mt-2 text-2xl font-bold font-mono text-white">
+            {counts.totalCases}
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#8fa38d] font-mono">
+            <TrendingUp className="w-3 h-3" />
+            <span>+3 new this month</span>
+          </div>
+        </div>
+
+        {/* Entities Tracked */}
+        <div
+          onClick={() => navigate("/entities")}
+          className="bg-[#14171c] border border-[#222731] rounded-lg p-4 hover:border-[#2d3542] hover:bg-[#161a20] transition-all cursor-pointer group shadow-xs"
+        >
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#9ca3af] uppercase tracking-wider">
+            <span>Entities Tracked</span>
+            <Users className="w-3.5 h-3.5 text-[#8fa38d] group-hover:text-white transition-colors" />
+          </div>
+          <div className="mt-2 text-2xl font-bold font-mono text-white">
+            {counts.totalEntities.toLocaleString()}
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#9ca3af] font-mono">
+            <span>94.2% resolution confidence</span>
+          </div>
+        </div>
+
+        {/* Network Relationships */}
+        <div
+          onClick={() => navigate("/network")}
+          className="bg-[#14171c] border border-[#222731] rounded-lg p-4 hover:border-[#2d3542] hover:bg-[#161a20] transition-all cursor-pointer group shadow-xs"
+        >
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#9ca3af] uppercase tracking-wider">
+            <span>Network Links</span>
+            <Share2 className="w-3.5 h-3.5 text-[#8fa38d] group-hover:text-white transition-colors" />
+          </div>
+          <div className="mt-2 text-2xl font-bold font-mono text-white">
+            {counts.totalRelationships.toLocaleString()}
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#8fa38d] font-mono">
+            <span>5 core clusters mapped</span>
+          </div>
+        </div>
+
+        {/* Priority Leads */}
+        <div
+          onClick={() => navigate("/leads")}
+          className="bg-[#14171c] border border-[#222731] rounded-lg p-4 hover:border-[#2d3542] hover:bg-[#161a20] transition-all cursor-pointer group shadow-xs"
+        >
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#9ca3af] uppercase tracking-wider">
+            <span>Priority Leads</span>
+            <Flame className="w-3.5 h-3.5 text-[#dc7869] group-hover:text-white transition-colors" />
+          </div>
+          <div className="mt-2 text-2xl font-bold font-mono text-white">
+            {counts.priorityLeads}
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-[#c9a667] font-mono">
+            <AlertTriangle className="w-3 h-3" />
+            <span>5 require investigator review</span>
           </div>
         </div>
       </div>
 
-      {/* KPI Stats Grid */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#263B55] pb-3">
+      {/* Main Grid: Activity Chart (Left) + Priority Leads (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Activity Chart */}
+        <div className="lg:col-span-7 bg-[#14171c] border border-[#222731] rounded-lg p-5 flex flex-col justify-between shadow-xs">
           <div>
-            <div className="text-xs font-mono uppercase tracking-wider text-[#06B6D4] flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
-              INTELLIGENCE OVERVIEW
-            </div>
-            <h2 className="text-2xl font-bold text-white tracking-tight mt-0.5">Investigation Overview</h2>
-            <p className="text-xs text-[#94A3B8] mt-0.5">Live telemetry from MongoDB Atlas & Graph Analytics</p>
-          </div>
-          <div className="flex items-center gap-2 text-xs font-mono text-[#94A3B8]">
-            {isSummaryLoading ? (
-              <span className="flex items-center gap-1 text-steel-400">
-                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Syncing Backend Data...
-              </span>
-            ) : (
-              <span className="px-2 py-1 rounded bg-[#101F33] border border-[#263B55]">
-                Active Docket: <strong className="text-white">CASE #IT-2026-NIGHTSHADE</strong>
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[#101F33] border border-[#263B55] rounded-xl p-4 hover:border-[#2563EB] transition-all group shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-[#94A3B8] font-medium">Active Investigations</span>
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-[#2563EB]">
-                <Briefcase className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold text-white font-mono">{counts.totalCases}</div>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#10B981] font-mono mt-1">
-                <TrendingUp className="w-3 h-3" />
-                <span>{counts.activeCases} active multi-jurisdiction dockets</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#101F33] border border-[#263B55] rounded-xl p-4 hover:border-[#06B6D4] transition-all group shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-[#94A3B8] font-medium">Entities Identified</span>
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-[#06B6D4]">
-                <Users className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold text-white font-mono">{counts.totalEntities}</div>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#06B6D4] font-mono mt-1">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>94.2% entity resolution match</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#101F33] border border-[#263B55] rounded-xl p-4 hover:border-[#10B981] transition-all group shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-[#94A3B8] font-medium">Relationships Mapped</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-[#10B981]">
-                <Share2 className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold text-white font-mono">{counts.totalRelationships}</div>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#10B981] font-mono mt-1">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>1,204 cross-verified relationships</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#101F33] border border-[#263B55] rounded-xl p-4 hover:border-[#EF4444] transition-all group shadow-md">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-[#94A3B8] font-medium">High-Priority Leads</span>
-              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-[#EF4444]">
-                <Flame className="w-4 h-4" />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-3xl font-extrabold text-white font-mono text-[#EF4444]">{counts.priorityLeads}</div>
-              <div className="flex items-center gap-1.5 text-[11px] text-[#F59E0B] font-mono mt-1">
-                <AlertTriangle className="w-3 h-3" />
-                <span>Actionable signals requiring human verification</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Operational Lifecycle Pipeline */}
-      <div className="bg-[#0D1B2A] border border-[#263B55] rounded-2xl p-5 sm:p-6 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs font-mono uppercase tracking-wider text-[#06B6D4]">OPERATIONAL LIFECYCLE</div>
-            <h3 className="text-lg font-bold text-white tracking-tight">IntelliTrack Core Investigation Flow</h3>
-          </div>
-          <span className="hidden sm:inline text-xs font-mono text-[#94A3B8]">Horizontal End-to-End Pipeline</span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-          {workflowStages.map((st, idx) => (
-            <div
-              key={st.title}
-              onMouseEnter={() => setActiveWorkflowStage(idx)}
-              onMouseLeave={() => setActiveWorkflowStage(null)}
-              className={`p-3 rounded-xl border transition-all duration-200 cursor-pointer relative overflow-hidden group ${
-                activeWorkflowStage === idx
-                  ? "bg-[#12243A] border-[#2563EB] shadow-lg scale-102"
-                  : "bg-[#101F33] border-[#263B55] hover:border-slate-400"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold text-[#06B6D4]">{st.step}</span>
-                {idx < workflowStages.length - 1 && (
-                  <span className="text-[#263B55] group-hover:text-[#06B6D4] text-xs font-bold transition-colors">
-                    →
-                  </span>
-                )}
-              </div>
-              <div className="text-xs font-extrabold font-mono text-white tracking-wider">{st.title}</div>
-              <div className="text-[11px] text-[#94A3B8] mt-1 leading-snug">{st.desc}</div>
-              <div className="text-[10px] text-cyan-300 font-mono mt-2 pt-1 border-t border-[#263B55]/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                {st.detail}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Ingestion & AI Architecture */}
-      <div className="bg-[#0D1B2A] border border-[#263B55] rounded-2xl p-5 sm:p-6 space-y-6 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#263B55] pb-3">
-          <div>
-            <div className="text-xs font-mono uppercase tracking-wider text-[#06B6D4]">MULTI-MODAL INGESTION</div>
-            <h3 className="text-lg font-bold text-white tracking-tight">Data Sources & Intelligence Fusion Architecture</h3>
-            <p className="text-xs text-[#94A3B8]">Heterogeneous investigative data ingested, normalized and transformed into connected intelligence</p>
-          </div>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-[#101F33] text-[#10B981] border border-emerald-500/30">
-            7 Ingestion Channels Active
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-          <div className="lg:col-span-4 space-y-2">
-            <div className="text-[11px] font-mono text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-              <Database className="w-3.5 h-3.5 text-cyan-400" />
-              <span>RAW INVESTIGATION SOURCES</span>
-            </div>
-            <div className="space-y-1.5">
-              {dataSources.map((ds) => {
-                const IconComponent = ds.icon;
-                return (
-                  <div
-                    key={ds.title}
-                    className="p-2.5 rounded-lg bg-[#101F33] border border-[#263B55] hover:border-slate-400 transition-all flex items-center justify-between text-xs font-mono group"
-                  >
-                    <div className="flex items-center gap-2.5 truncate">
-                      <div
-                        className="w-6 h-6 rounded flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: `${ds.color}15`, color: ds.color }}
-                      >
-                        <IconComponent className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="truncate">
-                        <div className="text-white font-semibold truncate">{ds.title}</div>
-                        <div className="text-[10px] text-[#94A3B8] truncate">{ds.desc}</div>
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-[#06B6D4] font-bold">→</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="lg:col-span-4 flex flex-col items-center justify-center p-6 rounded-2xl bg-gradient-to-b from-[#101F33] to-[#07111F] border-2 border-[#2563EB] shadow-2xl text-center space-y-3 relative">
-            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-[#06B6D4]/40 flex items-center justify-center text-[#06B6D4] shadow-inner relative">
-              <Cpu className="w-8 h-8 animate-pulse text-[#06B6D4]" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#10B981] animate-ping" />
-            </div>
-            <div>
-              <div className="text-[10px] font-mono tracking-widest text-[#06B6D4] uppercase font-bold">CENTRAL PROCESSING</div>
-              <h4 className="text-lg font-black text-white font-mono tracking-wider mt-0.5">INTELLITRACK AI ENGINE</h4>
-              <p className="text-xs text-[#94A3B8] mt-1 max-w-xs mx-auto">
-                Neural entity resolution, graph centrality algorithms, and multi-factor explainability scoring.
-              </p>
-            </div>
-            <div className="flex flex-wrap justify-center gap-1.5 text-[10px] font-mono text-slate-300 pt-1">
-              <span className="px-2 py-0.5 rounded bg-[#07111F] border border-[#263B55]">Fast-Fuzzy Match</span>
-              <span className="px-2 py-0.5 rounded bg-[#07111F] border border-[#263B55]">Graph Centrality</span>
-              <span className="px-2 py-0.5 rounded bg-[#07111F] border border-[#263B55]">Merkle Ledger</span>
-            </div>
-          </div>
-
-          <div className="lg:col-span-4 space-y-2">
-            <div className="text-[11px] font-mono text-[#94A3B8] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-              <Share2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>SYNTHESIZED INTELLIGENCE OBJECTS</span>
-            </div>
-            <div className="space-y-2">
-              <div className="p-3 rounded-lg bg-[#101F33] border border-[#263B55] flex items-center gap-3">
-                <Users className="w-4 h-4 text-[#2563EB] shrink-0" />
-                <div>
-                  <div className="text-xs font-bold text-white font-mono">ENTITIES ({counts.totalEntities})</div>
-                  <div className="text-[11px] text-[#94A3B8]">Resolved persons of interest, aliases & shell companies</div>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-[#101F33] border border-[#263B55] flex items-center gap-3">
-                <Share2 className="w-4 h-4 text-[#06B6D4] shrink-0" />
-                <div>
-                  <div className="text-xs font-bold text-white font-mono">RELATIONSHIPS ({counts.totalRelationships})</div>
-                  <div className="text-[11px] text-[#94A3B8]">Weighted link edges, communications & co-presence</div>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-[#101F33] border border-[#263B55] flex items-center gap-3">
-                <MapPin className="w-4 h-4 text-[#10B981] shrink-0" />
-                <div>
-                  <div className="text-xs font-bold text-white font-mono">LOCATIONS (Active Coordinates)</div>
-                  <div className="text-[11px] text-[#94A3B8]">Repeated meeting points, safehouses & toll hits</div>
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-[#101F33] border border-[#263B55] flex items-center gap-3">
-                <Calendar className="w-4 h-4 text-[#F59E0B] shrink-0" />
-                <div>
-                  <div className="text-xs font-bold text-white font-mono">CHRONOLOGICAL EVENTS</div>
-                  <div className="text-[11px] text-[#94A3B8]">Chronological incidents, call bursts & dock arrivals</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Analytics Charts */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between border-b border-[#263B55] pb-2">
-          <div>
-            <div className="text-xs font-mono uppercase tracking-wider text-[#06B6D4]">ANALYTIC TELEMETRY</div>
-            <h3 className="text-xl font-bold text-white tracking-tight">Investigative Intelligence Analytics</h3>
-          </div>
-          <span className="text-xs font-mono text-[#94A3B8]">Color System: Blue / Cyan / Green / Amber / Red</span>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          <div className="lg:col-span-7 bg-[#101F33] border border-[#263B55] rounded-xl p-4 sm:p-5 shadow-lg space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-3 border-b border-[#1e232a]">
               <div>
-                <h4 className="text-sm font-bold text-white font-mono">Activity Over Time (30-Day Syndicate Pulse)</h4>
-                <p className="text-[11px] text-[#94A3B8]">Temporal frequency of encrypted calls, financial wire transfers and surveillance hits</p>
+                <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+                  Investigation Activity Pulse
+                </h3>
+                <p className="text-[11px] text-[#9ca3af] mt-0.5">
+                  Chronological volume of intercepted communications, fund transfers, and optical ALPR hits.
+                </p>
               </div>
-              <div className="flex items-center gap-3 text-[10px] font-mono">
-                <span className="flex items-center gap-1 text-[#06B6D4]">
-                  <span className="w-2 h-2 rounded-full bg-[#06B6D4]" /> Communications
+              <div className="flex items-center gap-3 text-[10px] font-mono text-[#9ca3af]">
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#9cae9b]" /> Comms
                 </span>
-                <span className="flex items-center gap-1 text-[#2563EB]">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]" /> Transactions
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-[#64748b]" /> Wires
                 </span>
               </div>
             </div>
 
-            <div className="h-60 w-full">
+            <div className="h-64 w-full mt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={DEFAULT_ACTIVITY_DATA}>
+                <AreaChart data={ACTIVITY_PULSE_DATA}>
                   <defs>
-                    <linearGradient id="commGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#06B6D4" stopOpacity={0} />
+                    <linearGradient id="sageGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#9cae9b" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#9cae9b" stopOpacity={0.0} />
                     </linearGradient>
-                    <linearGradient id="transGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                    <linearGradient id="slateGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#64748b" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#64748b" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#263B55" vertical={false} />
-                  <XAxis dataKey="day" stroke="#94A3B8" fontSize={10} tickLine={false} />
-                  <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} />
+                  <CartesianGrid strokeDasharray="2 2" stroke="#1e232a" vertical={false} />
+                  <XAxis dataKey="day" stroke="#606875" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#606875" fontSize={10} tickLine={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#0D1B2A",
-                      borderColor: "#263B55",
-                      borderRadius: "8px",
-                      color: "#F8FAFC",
+                      backgroundColor: "#101317",
+                      borderColor: "#222731",
+                      borderRadius: "6px",
+                      color: "#f3f4f6",
                       fontSize: "11px",
                       fontFamily: "monospace",
                     }}
                   />
-                  <Area type="monotone" dataKey="communications" stroke="#06B6D4" strokeWidth={2} fillOpacity={1} fill="url(#commGrad)" />
-                  <Area type="monotone" dataKey="transactions" stroke="#2563EB" strokeWidth={2} fillOpacity={1} fill="url(#transGrad)" />
+                  <Area
+                    type="monotone"
+                    dataKey="comms"
+                    stroke="#9cae9b"
+                    strokeWidth={1.5}
+                    fillOpacity={1}
+                    fill="url(#sageGrad)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="wires"
+                    stroke="#64748b"
+                    strokeWidth={1.5}
+                    fillOpacity={1}
+                    fill="url(#slateGrad)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="lg:col-span-5 bg-[#101F33] border border-[#263B55] rounded-xl p-4 sm:p-5 shadow-lg space-y-3">
-            <div>
-              <h4 className="text-sm font-bold text-white font-mono">Entity Distribution by Classification</h4>
-              <p className="text-[11px] text-[#94A3B8]">{counts.totalEntities} mapped entities across forensic categories</p>
+          <div className="mt-4 pt-3 border-t border-[#1e232a] flex items-center justify-between text-xs text-[#9ca3af]">
+            <span className="font-mono text-[11px]">Aggregated across 28 dockets</span>
+            <button
+              onClick={() => navigate("/timeline")}
+              className="text-[#9cae9b] hover:underline font-mono text-xs flex items-center gap-1 cursor-pointer"
+            >
+              <span>View Full Investigation Timeline</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Priority Leads List */}
+        <div className="lg:col-span-5 bg-[#14171c] border border-[#222731] rounded-lg p-5 flex flex-col justify-between shadow-xs">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-[#1e232a]">
+              <div>
+                <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+                  Prioritized AI Signals
+                </h3>
+                <p className="text-[11px] text-[#9ca3af] mt-0.5">
+                  Algorithmic lead anomalies requiring sworn investigator validation.
+                </p>
+              </div>
+              <button
+                onClick={() => navigate("/leads")}
+                className="text-[11px] font-mono text-[#9cae9b] hover:underline cursor-pointer"
+              >
+                All ({counts.priorityLeads}) →
+              </button>
             </div>
-            <div className="h-60 w-full flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={DEFAULT_ENTITY_DISTRIBUTION}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={3}
-                    dataKey="count"
-                  >
-                    {DEFAULT_ENTITY_DISTRIBUTION.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#0D1B2A",
-                      borderColor: "#263B55",
-                      borderRadius: "8px",
-                      color: "#F8FAFC",
-                      fontSize: "11px",
-                      fontFamily: "monospace",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-              {DEFAULT_ENTITY_DISTRIBUTION.map((item) => (
-                <div key={item.name} className="flex items-center gap-1.5 text-[#94A3B8]">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                  <span className="truncate">{item.name}:</span>
-                  <span className="text-white font-bold">{item.count}</span>
+
+            <div className="divide-y divide-[#1e232a] mt-2">
+              {PRIORITY_LEADS_LIST.map((lead) => (
+                <div
+                  key={lead.id}
+                  onClick={() => setSelectedExplainLead(DEMO_EXPLAINABILITY)}
+                  className="py-3 hover:bg-[#181c22] px-2 rounded-md transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between text-[10px] font-mono mb-1">
+                    <span
+                      className={`px-1.5 py-0.2 rounded font-semibold ${
+                        lead.severity === "CRITICAL"
+                          ? "bg-[#2b1719] text-[#dc7869] border border-[#442327]"
+                          : lead.severity === "HIGH"
+                          ? "bg-[#282215] text-[#c9a667] border border-[#3e3420]"
+                          : "bg-[#161a20] text-[#9ca3af] border border-[#232832]"
+                      }`}
+                    >
+                      {lead.severity}
+                    </span>
+                    <span className="text-[#8fa38d] font-semibold">{lead.confidence}% MATCH</span>
+                  </div>
+
+                  <div className="text-xs font-medium text-white group-hover:text-[#9cae9b] transition-colors">
+                    {lead.title}
+                  </div>
+                  <div className="text-[11px] text-[#9ca3af] mt-1 line-clamp-2 leading-relaxed">
+                    {lead.reason}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Featured Explainable Lead */}
-      <div className="bg-[#0D1B2A] border border-[#263B55] rounded-2xl p-5 sm:p-6 space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#263B55] pb-3">
-          <div>
-            <div className="text-xs font-mono uppercase tracking-wider text-[#EF4444] flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-pulse" />
-              PRIORITIZED INVESTIGATIVE SIGNAL
-            </div>
-            <h3 className="text-lg font-bold text-white tracking-tight mt-0.5">Featured Explainable Lead: LEAD #024</h3>
-            <p className="text-xs text-[#94A3B8]">Demonstrating transparent, non-black-box algorithmic rationale with sworn human verification</p>
-          </div>
-          <div className="flex items-center gap-2">
+          <div className="mt-4 pt-3 border-t border-[#1e232a] flex items-center justify-between text-[11px] font-mono text-[#606875]">
+            <span>Explainable AI Engine v4.8</span>
             <button
               onClick={() => setSelectedExplainLead(DEMO_EXPLAINABILITY)}
-              className="px-4 py-2 rounded-lg bg-blue-500/10 border border-[#2563EB] hover:bg-[#2563EB] text-[#06B6D4] hover:text-white text-xs font-mono font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md"
+              className="text-[#9cae9b] hover:underline flex items-center gap-1 cursor-pointer"
             >
-              <HelpCircle className="w-4 h-4 text-cyan-400" />
+              <HelpCircle className="w-3.5 h-3.5" />
               <span>Why this lead?</span>
             </button>
-            <button
-              onClick={() => navigate("/leads")}
-              className="px-3 py-2 rounded-lg bg-[#101F33] hover:bg-[#12243A] text-white border border-[#263B55] text-xs font-mono transition-colors cursor-pointer"
-            >
-              All Leads →
-            </button>
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-[#101F33] border border-[#263B55] space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5">
-              <span className="px-2 py-0.5 rounded bg-red-500/20 text-[#EF4444] font-mono text-xs font-bold border border-red-500/30">
-                HIGH PRIORITY
-              </span>
-              <span className="font-mono text-xs text-white font-bold">
-                LEAD #024: Hawala Fund Movement & Vehicle Rendezvous
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="text-[#94A3B8]">Confidence:</span>
-              <span className="text-[#06B6D4] font-extrabold text-sm">87%</span>
-            </div>
-          </div>
-
-          <div className="text-xs text-slate-300 leading-relaxed">
-            "Multiple observed relationships across communication, transaction and location records connecting Raj Mehta, Vikramaditya Singhania, and BlueStar Logistics."
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-mono text-xs">
-            <div className="p-2 rounded bg-[#07111F] border border-[#263B55] flex items-center gap-2">
-              <Users className="w-3.5 h-3.5 text-blue-400" />
-              <span className="text-white font-bold">4 Linked Entities</span>
-            </div>
-            <div className="p-2 rounded bg-[#07111F] border border-[#263B55] flex items-center gap-2">
-              <Phone className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="text-white font-bold">3 CDR Records</span>
-            </div>
-            <div className="p-2 rounded bg-[#07111F] border border-[#263B55] flex items-center gap-2">
-              <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-white font-bold">2 Transactions</span>
-            </div>
-            <div className="p-2 rounded bg-[#07111F] border border-[#263B55] flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-white font-bold">2 Shared Locations</span>
-            </div>
-          </div>
-
-          <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-[#263B55]/60 text-xs font-mono">
-            <div className="text-[11px] text-[#F59E0B] flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-              <span>AI-generated investigative lead — requires investigator verification</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setSelectedExplainLead(DEMO_EXPLAINABILITY)}
-                className="px-3 py-1.5 rounded bg-blue-500/10 text-cyan-300 border border-blue-500/30 hover:bg-blue-500/20 transition-colors font-semibold"
-              >
-                Why this lead?
-              </button>
-              <button
-                onClick={() => navigate("/evidence")}
-                className="px-3 py-1.5 rounded bg-[#07111F] text-slate-300 border border-[#263B55] hover:text-white transition-colors"
-              >
-                View Evidence
-              </button>
-              <button
-                onClick={() => navigate("/network")}
-                className="px-3 py-1.5 rounded bg-[#07111F] text-slate-300 border border-[#263B55] hover:text-white transition-colors"
-              >
-                Open Network
-              </button>
-            </div>
           </div>
         </div>
       </div>
 
+      {/* Bottom Grid: Recent Cases Table (Left) + Entity Distribution & Metrics (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Recent Cases Table */}
+        <div className="lg:col-span-7 bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-[#1e232a]">
+            <div>
+              <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+                Active Investigation Cases
+              </h3>
+              <p className="text-[11px] text-[#9ca3af] mt-0.5">
+                Primary cross-jurisdiction dockets under active surveillance.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate("/cases")}
+              className="text-[11px] font-mono text-[#9cae9b] hover:underline cursor-pointer"
+            >
+              View All Cases →
+            </button>
+          </div>
+
+          <div className="overflow-x-auto mt-3">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-[#1e232a] text-[10px] font-mono text-[#606875] uppercase tracking-wider">
+                  <th className="pb-2 font-semibold">Case ID / Title</th>
+                  <th className="pb-2 font-semibold">Lead Investigator</th>
+                  <th className="pb-2 font-semibold">Entities</th>
+                  <th className="pb-2 font-semibold">Status</th>
+                  <th className="pb-2 font-semibold text-right">Activity</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#1e232a]/60">
+                {RECENT_CASES.map((cs) => (
+                  <tr
+                    key={cs.id}
+                    onClick={() => navigate(`/cases/${cs.id}`)}
+                    className="hover:bg-[#181c22] transition-colors cursor-pointer group"
+                  >
+                    <td className="py-2.5 pr-2">
+                      <div className="font-medium text-white group-hover:text-[#9cae9b] transition-colors">
+                        {cs.title}
+                      </div>
+                      <div className="font-mono text-[10px] text-[#606875]">{cs.id}</div>
+                    </td>
+                    <td className="py-2.5 text-[#d1d5db] font-sans">{cs.lead}</td>
+                    <td className="py-2.5 font-mono text-[#9ca3af]">{cs.entities}</td>
+                    <td className="py-2.5">
+                      <span
+                        className={`inline-block px-1.5 py-0.2 rounded text-[10px] font-mono ${
+                          cs.statusVariant === "active"
+                            ? "bg-[#18261c] text-[#8fa38d] border border-[#25392b]"
+                            : cs.statusVariant === "warning"
+                            ? "bg-[#282215] text-[#c9a667] border border-[#3e3420]"
+                            : "bg-[#14171c] text-[#9ca3af] border border-[#222731]"
+                        }`}
+                      >
+                        {cs.status}
+                      </span>
+                    </td>
+                    <td className="py-2.5 text-right font-mono text-[10px] text-[#606875]">
+                      {cs.lastActivity}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Entity Classification Pie & Graph Metrics */}
+        <div className="lg:col-span-5 bg-[#14171c] border border-[#222731] rounded-lg p-5 flex flex-col justify-between shadow-xs">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-[#1e232a]">
+              <div>
+                <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+                  Entity Breakdown
+                </h3>
+                <p className="text-[11px] text-[#9ca3af] mt-0.5">
+                  Distribution of 1,482 mapped intelligence objects
+                </p>
+              </div>
+              <button
+                onClick={() => navigate("/entities")}
+                className="text-[11px] font-mono text-[#9cae9b] hover:underline cursor-pointer"
+              >
+                Directory →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center mt-3">
+              <div className="h-40 w-full flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={ENTITY_DISTRIBUTION}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={36}
+                      outerRadius={60}
+                      paddingAngle={2}
+                      dataKey="count"
+                    >
+                      {ENTITY_DISTRIBUTION.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#101317",
+                        borderColor: "#222731",
+                        borderRadius: "6px",
+                        color: "#f3f4f6",
+                        fontSize: "10px",
+                        fontFamily: "monospace",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="space-y-1.5 text-[11px] font-mono">
+                {ENTITY_DISTRIBUTION.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between text-[#9ca3af]">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                      <span className="truncate">{item.name}</span>
+                    </div>
+                    <span className="text-white font-medium">{item.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-[#1e232a] flex items-center justify-between text-xs">
+            <span className="text-[11px] text-[#606875] font-mono">
+              Graph Centrality: <strong className="text-white">Raj Mehta (0.89)</strong>
+            </span>
+            <button
+              onClick={() => navigate("/network")}
+              className="text-xs font-mono text-[#9cae9b] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <span>Explore Graph</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Explainability Modal */}
       <WhyThisLeadModal
         isOpen={!!selectedExplainLead}
         onClose={() => setSelectedExplainLead(null)}

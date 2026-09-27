@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Users2,
+  Users,
   Search,
   ChevronRight,
   ShieldAlert,
@@ -10,192 +10,340 @@ import {
   Building,
   MapPin,
   GitBranch,
-  Sparkles
+  Sparkles,
+  Plus
 } from "lucide-react";
 import { useActiveCase } from "@/context/CaseContext";
+
 const ENTITIES_MOCK_DATA = [
   {
     id: "poi-1",
-    name: "Viktor Konstantin Sokolov",
-    primaryAlias: "Sokol / The Courier",
+    name: "Raj Mehta",
+    primaryAlias: 'Alias: "The Courier" · Logistics Broker',
     type: "PERSON",
     linkedIdentitiesCount: 4,
     confidenceScore: 94,
-    lastSeen: "14:32 UTC (Pier 42 Dock)",
+    lastSeen: "14:32 UTC (Pier 42 Maritime Dock)",
     threatTier: "CRITICAL",
-    activeWarrants: 2
+    activeWarrants: 2,
+    associatedCases: "CASE #IT-2024-884"
   },
   {
     id: "poi-2",
-    name: 'Dmitri "The Anchor" Volkov',
-    primaryAlias: "Dima / Volkov Logistics",
+    name: "Vikramaditya Singhania",
+    primaryAlias: "Syndicate Beneficiary · Director",
     type: "PERSON",
     linkedIdentitiesCount: 3,
     confidenceScore: 89,
-    lastSeen: "Yesterday 21:10 UTC",
+    lastSeen: "Yesterday 21:10 UTC (Safehouse B-4)",
     threatTier: "HIGH",
-    activeWarrants: 1
+    activeWarrants: 1,
+    associatedCases: "CASE #IT-2024-884"
   },
   {
     id: "phn-1",
-    name: "+1 (555) 019-8821",
-    primaryAlias: "Burner SIM (T-Mobile VoLTE)",
+    name: "+91 98201 44921",
+    primaryAlias: "Burner SIM (VoLTE) · IMEI: 86129480112948",
     type: "PHONE",
     linkedIdentitiesCount: 2,
     confidenceScore: 92,
-    lastSeen: "12 mins ago (Cell Tower 42)",
+    lastSeen: "12 mins ago (Cell Tower JNPT-04)",
     threatTier: "CRITICAL",
-    activeWarrants: 0
+    activeWarrants: 0,
+    associatedCases: "CASE #IT-2024-884"
   },
   {
     id: "veh-1",
-    name: "Black Audi A8 [NY: TRK-9902]",
-    primaryAlias: "VIN: 1WAUDI4890123",
+    name: "Black Audi A8 [MH-01-EA-9902]",
+    primaryAlias: "Conveyance Sedan · ALPR Scanned",
     type: "VEHICLE",
     linkedIdentitiesCount: 2,
     confidenceScore: 87,
-    lastSeen: "14:28 UTC (Industrial Park)",
+    lastSeen: "14:28 UTC (JNPT Port Toll)",
     threatTier: "HIGH",
-    activeWarrants: 0
+    activeWarrants: 0,
+    associatedCases: "CASE #IT-2024-884"
   },
   {
     id: "loc-1",
     name: "Pier 42 Maritime Facility",
-    primaryAlias: "Commercial Loading Berth 4",
+    primaryAlias: "Container Yard Berth B-4 (Meeting Hotspot)",
     type: "LOCATION",
     linkedIdentitiesCount: 5,
     confidenceScore: 95,
-    lastSeen: "Active Surveillance",
+    lastSeen: "Active Surveillance Hit",
     threatTier: "CRITICAL",
-    activeWarrants: 1
+    activeWarrants: 1,
+    associatedCases: "CASE #IT-2024-884"
   },
   {
     id: "org-1",
-    name: "Astraea Trading Corp (Cyprus)",
-    primaryAlias: "Astraea Logistics Ltd",
+    name: "BlueStar Logistics Pvt. Ltd.",
+    primaryAlias: "Shell Freight Forwarder · Hawala Routing",
     type: "ORGANIZATION",
     linkedIdentitiesCount: 3,
     confidenceScore: 78,
-    lastSeen: "Wire Transfer 3 days ago",
+    lastSeen: "NEFT Wire $142,000 Transferred",
     threatTier: "MEDIUM",
-    activeWarrants: 0
+    activeWarrants: 0,
+    associatedCases: "CASE #IT-2024-884"
   },
   {
     id: "poi-3",
-    name: 'Mikhail "Kozel" Kozlov',
-    primaryAlias: "Misha / Kozel Tech",
+    name: "Tariq Mansoor",
+    primaryAlias: "Hawala Account Escrow Operator",
     type: "PERSON",
     linkedIdentitiesCount: 2,
     confidenceScore: 83,
-    lastSeen: "Oct 12 (Safehouse 04)",
+    lastSeen: "3 days ago (Dubai Remittance Link)",
     threatTier: "MEDIUM",
-    activeWarrants: 0
+    activeWarrants: 0,
+    associatedCases: "CASE #IT-2024-850"
   }
 ];
+
 const EntitiesListPage = () => {
   const navigate = useNavigate();
   const { activeCase } = useActiveCase();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [threatFilter, setThreatFilter] = useState("ALL");
+
   const filteredEntities = ENTITIES_MOCK_DATA.filter((ent) => {
-    const matchesSearch = ent.name.toLowerCase().includes(search.toLowerCase()) || ent.primaryAlias.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch =
+      ent.name.toLowerCase().includes(search.toLowerCase()) ||
+      ent.primaryAlias.toLowerCase().includes(search.toLowerCase());
     const matchesType = typeFilter === "ALL" || ent.type === typeFilter;
     const matchesThreat = threatFilter === "ALL" || ent.threatTier === threatFilter;
     return matchesSearch && matchesType && matchesThreat;
   });
+
   const getEntityIcon = (type) => {
     switch (type) {
       case "PERSON":
-        return /* @__PURE__ */ React.createElement(Users2, { className: "w-4 h-4 text-purple-400" });
+        return <Users className="w-4 h-4 text-[#9cae9b]" />;
       case "PHONE":
-        return /* @__PURE__ */ React.createElement(Phone, { className: "w-4 h-4 text-cyan-400" });
+        return <Phone className="w-4 h-4 text-[#7a8ba8]" />;
       case "VEHICLE":
-        return /* @__PURE__ */ React.createElement(Car, { className: "w-4 h-4 text-amber-400" });
+        return <Car className="w-4 h-4 text-[#c4a265]" />;
       case "LOCATION":
-        return /* @__PURE__ */ React.createElement(MapPin, { className: "w-4 h-4 text-rose-400" });
+        return <MapPin className="w-4 h-4 text-[#d97768]" />;
       case "ORGANIZATION":
-        return /* @__PURE__ */ React.createElement(Building, { className: "w-4 h-4 text-indigo-400" });
+        return <Building className="w-4 h-4 text-[#8fa38d]" />;
+      default:
+        return <Users className="w-4 h-4 text-[#9cae9b]" />;
     }
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "space-y-6 max-w-7xl mx-auto font-sans pb-16" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#181126] border border-[#2c1d47] rounded-xl p-6 shadow-xl shadow-purple-950/40 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "absolute top-0 right-0 w-96 h-48 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ React.createElement("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-purple-950/80 border border-purple-500/40 text-purple-300 font-mono text-[11px] uppercase tracking-wider mb-2" }, /* @__PURE__ */ React.createElement(Users2, { className: "w-3.5 h-3.5 text-purple-400" }), /* @__PURE__ */ React.createElement("span", null, "CENTRAL CRIMINAL INTELLIGENCE REGISTRY \u2022 ACTIVE SYNDICATES")), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl sm:text-3xl font-bold text-white tracking-tight" }, "Entities & Target Profiles"), /* @__PURE__ */ React.createElement("p", { className: "text-xs sm:text-sm text-purple-200/70 mt-1 max-w-2xl leading-relaxed" }, "Unified cross-source entity directory resolving persons of interest, burner telephony, tactical conveyances, safehouses, and shell syndicates.")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-3 self-start lg:self-auto" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/entity-resolution"),
-      className: "px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-mono text-xs font-bold shadow-lg shadow-purple-950/60 flex items-center gap-2 transition-all transform active:scale-95"
-    },
-    /* @__PURE__ */ React.createElement(GitBranch, { className: "w-3.5 h-3.5" }),
-    /* @__PURE__ */ React.createElement("span", null, "Resolve 4 Match Candidates")
-  )))), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4 gap-4 font-mono" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#181126] border border-[#2c1d47] rounded-xl p-4 shadow-lg shadow-purple-950/20" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-purple-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "TOTAL TRACKED"), /* @__PURE__ */ React.createElement(Users2, { className: "w-3.5 h-3.5 text-purple-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-white tracking-tight" }, "1,420"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-purple-300/70 mt-1" }, "520 POIs \u2022 410 Telephony")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#181126] border border-[#2c1d47] rounded-xl p-4 shadow-lg shadow-purple-950/20" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-rose-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "HIGH / CRITICAL"), /* @__PURE__ */ React.createElement(ShieldAlert, { className: "w-3.5 h-3.5 text-rose-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-rose-300 tracking-tight" }, "86 Targets"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-rose-300/70 mt-1" }, "28 active arrest warrants")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#181126] border border-[#2c1d47] rounded-xl p-4 shadow-lg shadow-purple-950/20" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-purple-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "AVG CONFIDENCE"), /* @__PURE__ */ React.createElement(Sparkles, { className: "w-3.5 h-3.5 text-purple-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-purple-300 tracking-tight" }, "94.2%"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-purple-300/70 mt-1" }, "Soundex & Telemetry Matched")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#181126] border border-[#2c1d47] rounded-xl p-4 shadow-lg shadow-purple-950/20" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-indigo-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "PENDING MATCHES"), /* @__PURE__ */ React.createElement(GitBranch, { className: "w-3.5 h-3.5 text-indigo-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-indigo-300 tracking-tight" }, "4 Discrepancies"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-indigo-300/70 mt-1" }, "Ready in Resolution Workbench"))), /* @__PURE__ */ React.createElement("div", { className: "p-3 bg-[#181126] border border-[#2c1d47] rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono shadow-lg shadow-purple-950/20" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 w-full sm:w-80 relative" }, /* @__PURE__ */ React.createElement(Search, { className: "w-4 h-4 text-purple-400/60 absolute left-3 top-1/2 -translate-y-1/2" }), /* @__PURE__ */ React.createElement(
-    "input",
-    {
-      type: "text",
-      placeholder: "Search entity name, alias, phone, plate...",
-      value: search,
-      onChange: (e) => setSearch(e.target.value),
-      className: "w-full bg-[#0f0b18] border border-[#2c1d47] focus:border-purple-500 rounded-lg pl-9 pr-3 py-1.5 text-white placeholder-purple-200/40 focus:outline-none transition-colors"
-    }
-  )), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 w-full sm:w-auto" }, /* @__PURE__ */ React.createElement(
-    "select",
-    {
-      value: typeFilter,
-      onChange: (e) => setTypeFilter(e.target.value),
-      className: "bg-[#0f0b18] border border-[#2c1d47] rounded-lg px-3 py-1.5 text-purple-200 focus:outline-none focus:border-purple-500 transition-colors"
-    },
-    /* @__PURE__ */ React.createElement("option", { value: "ALL" }, "All Entity Types"),
-    /* @__PURE__ */ React.createElement("option", { value: "PERSON" }, "Persons of Interest"),
-    /* @__PURE__ */ React.createElement("option", { value: "PHONE" }, "Burner Telephony"),
-    /* @__PURE__ */ React.createElement("option", { value: "VEHICLE" }, "Tactical Vehicles"),
-    /* @__PURE__ */ React.createElement("option", { value: "LOCATION" }, "Locations / Safehouses"),
-    /* @__PURE__ */ React.createElement("option", { value: "ORGANIZATION" }, "Organizations")
-  ), /* @__PURE__ */ React.createElement(
-    "select",
-    {
-      value: threatFilter,
-      onChange: (e) => setThreatFilter(e.target.value),
-      className: "bg-[#0f0b18] border border-[#2c1d47] rounded-lg px-3 py-1.5 text-purple-200 focus:outline-none focus:border-purple-500 transition-colors"
-    },
-    /* @__PURE__ */ React.createElement("option", { value: "ALL" }, "All Threat Tiers"),
-    /* @__PURE__ */ React.createElement("option", { value: "CRITICAL" }, "Critical Threat"),
-    /* @__PURE__ */ React.createElement("option", { value: "HIGH" }, "High Threat"),
-    /* @__PURE__ */ React.createElement("option", { value: "MEDIUM" }, "Medium Threat"),
-    /* @__PURE__ */ React.createElement("option", { value: "LOW" }, "Low Threat")
-  ))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#181126] border border-[#2c1d47] rounded-xl overflow-hidden shadow-xl shadow-purple-950/30 font-mono text-xs" }, /* @__PURE__ */ React.createElement("div", { className: "overflow-x-auto" }, /* @__PURE__ */ React.createElement("table", { className: "w-full text-left" }, /* @__PURE__ */ React.createElement("thead", { className: "bg-[#0f0b18] text-purple-300/70 text-[11px] uppercase tracking-wider border-b border-[#2c1d47]" }, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4" }, "Entity Identifier"), /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4" }, "Category"), /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4" }, "Threat Level"), /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4 text-center" }, "Linked Identities"), /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4 text-center" }, "Confidence"), /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4" }, "Last Telemetry Activity"), /* @__PURE__ */ React.createElement("th", { className: "py-3 px-4 text-right" }, "Action"))), /* @__PURE__ */ React.createElement("tbody", { className: "divide-y divide-[#2c1d47] text-slate-200" }, filteredEntities.map((ent) => /* @__PURE__ */ React.createElement(
-    "tr",
-    {
-      key: ent.id,
-      onClick: () => navigate(`/entities/${ent.id}`),
-      className: "hover:bg-[#231838]/60 cursor-pointer transition-colors"
-    },
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-3" }, /* @__PURE__ */ React.createElement("div", { className: "w-8 h-8 rounded-lg bg-[#0f0b18] border border-[#2c1d47] flex items-center justify-center shrink-0 shadow-inner" }, getEntityIcon(ent.type)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold text-white text-sm font-sans hover:text-purple-300 transition-colors" }, ent.name), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-purple-200/60 mt-0.5" }, ent.primaryAlias)))),
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4 font-semibold text-purple-300 text-[11px]" }, ent.type),
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4" }, /* @__PURE__ */ React.createElement(
-      "span",
-      {
-        className: `inline-block px-2.5 py-0.5 rounded-full font-bold text-[10px] uppercase ${ent.threatTier === "CRITICAL" ? "bg-rose-950/80 text-rose-300 border border-rose-500/40" : ent.threatTier === "HIGH" ? "bg-amber-950/80 text-amber-300 border border-amber-500/40" : "bg-purple-950/80 text-purple-300 border border-purple-500/40"}`
-      },
-      "\u25CF ",
-      ent.threatTier
-    ), ent.activeWarrants > 0 && /* @__PURE__ */ React.createElement("span", { className: "ml-2 text-[10px] text-rose-400 font-bold" }, "(", ent.activeWarrants, " WARRANTS)")),
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4 text-center font-bold text-white" }, ent.linkedIdentitiesCount, " Records"),
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4 text-center" }, /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded bg-[#0f0b18] border border-[#2c1d47] font-bold text-purple-300" }, ent.confidenceScore, "%")),
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4 text-purple-200/70 text-[11px]" }, ent.lastSeen),
-    /* @__PURE__ */ React.createElement("td", { className: "py-3.5 px-4 text-right" }, /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        onClick: (e) => {
-          e.stopPropagation();
-          navigate(`/entities/${ent.id}`);
-        },
-        className: "px-3 py-1.5 rounded-lg bg-[#0f0b18] hover:bg-[#231838] border border-[#2c1d47] hover:border-purple-500/40 text-purple-300 hover:text-white font-semibold transition-all inline-flex items-center gap-1 shadow-sm"
-      },
-      /* @__PURE__ */ React.createElement("span", null, "Profile"),
-      /* @__PURE__ */ React.createElement(ChevronRight, { className: "w-3.5 h-3.5" })
-    ))
-  )))))));
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto font-sans antialiased text-[#f3f4f6]">
+      {/* Top Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#1e232a]">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-white tracking-tight">
+              Entities Directory
+            </h1>
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#18261c] text-[#8fa38d] border border-[#25392b]">
+              1,482 TRACKED
+            </span>
+          </div>
+          <p className="text-xs text-[#9ca3af] mt-0.5">
+            Unified cross-jurisdiction directory of persons of interest, burner telephony, vehicles, and shell syndicates.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => navigate("/entity-resolution")}
+            className="h-8.5 px-3 rounded-md bg-[#14171c] border border-[#222731] hover:bg-[#181c22] text-[#d1d5db] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+          >
+            <GitBranch className="w-3.5 h-3.5 text-[#9cae9b]" />
+            <span>Resolution Workbench</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Top Metrics Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 shadow-xs">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[#9ca3af]">
+            Total Entities
+          </div>
+          <div className="text-2xl font-bold font-mono text-white mt-1">1,482</div>
+          <div className="text-[10px] text-[#8fa38d] font-mono mt-0.5">
+            482 POIs · 390 Telephony
+          </div>
+        </div>
+
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 shadow-xs">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[#9ca3af]">
+            High / Critical Risk
+          </div>
+          <div className="text-2xl font-bold font-mono text-[#dc7869] mt-1">86 Targets</div>
+          <div className="text-[10px] text-[#dc7869] font-mono mt-0.5">
+            28 active arrest warrants
+          </div>
+        </div>
+
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 shadow-xs">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[#9ca3af]">
+            Resolution Confidence
+          </div>
+          <div className="text-2xl font-bold font-mono text-white mt-1">94.2%</div>
+          <div className="text-[10px] text-[#8fa38d] font-mono mt-0.5">
+            Soundex & Biometric Matched
+          </div>
+        </div>
+
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 shadow-xs">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-[#9ca3af]">
+            Candidate Matches
+          </div>
+          <div className="text-2xl font-bold font-mono text-[#c4a265] mt-1">4 Pending</div>
+          <div className="text-[10px] text-[#c4a265] font-mono mt-0.5">
+            Ready for Human Review
+          </div>
+        </div>
+      </div>
+
+      {/* Filter and Category Pills */}
+      <div className="p-3.5 bg-[#14171c] border border-[#222731] rounded-lg flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-xs">
+        <div className="flex items-center gap-2.5 w-full sm:w-80">
+          <Search className="w-3.5 h-3.5 text-[#606875] shrink-0" />
+          <input
+            type="text"
+            placeholder="Search entity name, alias, phone, plate..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-[#101317] border border-[#222731] rounded-md px-3 py-1.5 text-white placeholder-[#606875] focus:outline-none focus:border-[#9cae9b] text-xs font-sans"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="bg-[#101317] border border-[#222731] rounded-md px-3 py-1.5 text-[#d1d5db] focus:outline-none focus:border-[#9cae9b] text-xs"
+          >
+            <option value="ALL">All Entity Types</option>
+            <option value="PERSON">Persons of Interest</option>
+            <option value="PHONE">Burner Telephony</option>
+            <option value="VEHICLE">Vehicles</option>
+            <option value="LOCATION">Locations / Safehouses</option>
+            <option value="ORGANIZATION">Organizations</option>
+          </select>
+
+          <select
+            value={threatFilter}
+            onChange={(e) => setThreatFilter(e.target.value)}
+            className="bg-[#101317] border border-[#222731] rounded-md px-3 py-1.5 text-[#d1d5db] focus:outline-none focus:border-[#9cae9b] text-xs"
+          >
+            <option value="ALL">All Severity Tiers</option>
+            <option value="CRITICAL">Critical Severity</option>
+            <option value="HIGH">High Severity</option>
+            <option value="MEDIUM">Medium Severity</option>
+            <option value="LOW">Low Severity</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Entities Table */}
+      <div className="bg-[#14171c] border border-[#222731] rounded-lg overflow-hidden shadow-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs font-sans">
+            <thead className="bg-[#101317] text-[#9ca3af] font-mono text-[10px] uppercase tracking-wider border-b border-[#222731]">
+              <tr>
+                <th className="py-3 px-4 font-semibold">Entity Identifier</th>
+                <th className="py-3 px-4 font-semibold">Category</th>
+                <th className="py-3 px-4 font-semibold">Threat Level</th>
+                <th className="py-3 px-4 font-semibold text-center">Linked Records</th>
+                <th className="py-3 px-4 font-semibold text-center">Confidence</th>
+                <th className="py-3 px-4 font-semibold">Last Telemetry Hit</th>
+                <th className="py-3 px-4 font-semibold text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#1e232a] text-[#d1d5db]">
+              {filteredEntities.map((ent) => (
+                <tr
+                  key={ent.id}
+                  onClick={() => navigate(`/entities/${ent.id}`)}
+                  className="hover:bg-[#181c22] transition-colors cursor-pointer group"
+                >
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-md bg-[#101317] border border-[#222731] flex items-center justify-center shrink-0">
+                        {getEntityIcon(ent.type)}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-white group-hover:text-[#9cae9b] transition-colors">
+                          {ent.name}
+                        </div>
+                        <div className="text-[10px] text-[#606875] font-mono mt-0.5">
+                          {ent.primaryAlias}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="py-3 px-4 font-mono text-[10px] text-[#9ca3af]">
+                    {ent.type}
+                  </td>
+
+                  <td className="py-3 px-4">
+                    <span
+                      className={`inline-block px-2 py-0.2 rounded font-mono text-[10px] font-semibold uppercase ${
+                        ent.threatTier === "CRITICAL"
+                          ? "bg-[#2b1719] text-[#dc7869] border border-[#442327]"
+                          : ent.threatTier === "HIGH"
+                          ? "bg-[#282215] text-[#c4a265] border border-[#3e3420]"
+                          : "bg-[#161a20] text-[#9ca3af] border border-[#232832]"
+                      }`}
+                    >
+                      {ent.threatTier}
+                    </span>
+                    {ent.activeWarrants > 0 && (
+                      <span className="ml-1.5 text-[9px] text-[#dc7869] font-mono font-semibold">
+                        ({ent.activeWarrants} WARRANTS)
+                      </span>
+                    )}
+                  </td>
+
+                  <td className="py-3 px-4 text-center font-mono font-medium text-white">
+                    {ent.linkedIdentitiesCount} Records
+                  </td>
+
+                  <td className="py-3 px-4 text-center">
+                    <span className="px-1.5 py-0.2 rounded bg-[#101317] border border-[#222731] font-mono font-semibold text-[#8fa38d] text-[10px]">
+                      {ent.confidenceScore}%
+                    </span>
+                  </td>
+
+                  <td className="py-3 px-4 text-[11px] text-[#9ca3af] font-mono truncate max-w-xs">
+                    {ent.lastSeen}
+                  </td>
+
+                  <td className="py-3 px-4 text-right">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/entities/${ent.id}`);
+                      }}
+                      className="px-2.5 py-1 rounded-md bg-[#101317] hover:bg-[#181c22] border border-[#222731] text-[#9ca3af] hover:text-white font-medium text-xs transition-all inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>Profile</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 };
-var stdin_default = EntitiesListPage;
-export {
-  EntitiesListPage,
-  stdin_default as default
-};
+
+export { EntitiesListPage };
+export default EntitiesListPage;

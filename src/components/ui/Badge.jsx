@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "../../utils/cn";
+
 const Badge = ({
   className,
   variant = "default",
@@ -7,26 +8,35 @@ const Badge = ({
   children,
   ...props
 }) => {
-  const base = "inline-flex items-center justify-center font-mono font-semibold uppercase tracking-wider rounded select-none";
+  const base = "inline-flex items-center justify-center font-mono text-[10px] font-medium tracking-wide rounded-md px-2 py-0.5 select-none";
   const normalized = variant === "danger" ? "critical" : variant === "info" ? "agent" : variant === "neutral" ? "default" : variant;
+  
   const variants = {
-    default: "bg-tactical-neutral-100 dark:bg-tactical-neutral-800 text-tactical-neutral-700 dark:text-tactical-neutral-300 border border-tactical-neutral-300 dark:border-tactical-neutral-700",
-    primary: "bg-tactical-primary-100 dark:bg-tactical-primary-950 text-tactical-primary-700 dark:text-tactical-primary-300 border border-tactical-primary-300 dark:border-tactical-primary-800",
-    secondary: "bg-tactical-neutral-200 dark:bg-tactical-neutral-700 text-tactical-neutral-800 dark:text-tactical-neutral-200 border border-tactical-neutral-300",
-    critical: "bg-tactical-danger-50 dark:bg-tactical-danger-950 text-tactical-danger-700 dark:text-tactical-danger-300 border border-tactical-danger-300 dark:border-tactical-danger-800 font-bold",
-    warning: "bg-tactical-warning-50 dark:bg-tactical-warning-950 text-tactical-warning-700 dark:text-tactical-warning-300 border border-tactical-warning-300 dark:border-tactical-warning-800 font-bold",
-    success: "bg-tactical-success-50 dark:bg-tactical-success-950 text-tactical-success-700 dark:text-tactical-success-300 border border-tactical-success-300 dark:border-tactical-success-800 font-bold",
-    outline: "bg-transparent text-tactical-neutral-800 dark:text-tactical-neutral-200 border border-tactical-neutral-300 dark:border-tactical-neutral-700",
-    admin: "bg-tactical-neutral-900 text-white dark:bg-tactical-neutral-100 dark:text-tactical-neutral-900 border border-tactical-neutral-700 font-mono",
-    agent: "bg-tactical-primary-50 dark:bg-tactical-primary-950 text-tactical-primary-700 dark:text-tactical-primary-300 border border-tactical-primary-300 dark:border-tactical-primary-800 font-mono",
-    forensic: "bg-tactical-neutral-100 dark:bg-tactical-neutral-800 text-tactical-neutral-600 dark:text-tactical-neutral-400 border border-tactical-neutral-300 font-mono"
+    default: "bg-[#161a20] text-[#9ca3af] border border-[#232832]",
+    primary: "bg-[#18261c] text-[#8fa38d] border border-[#25392b]",
+    secondary: "bg-[#1b2028] text-[#cbd5e1] border border-[#28313e]",
+    critical: "bg-[#2b1719] text-[#dc7869] border border-[#442327]",
+    warning: "bg-[#282215] text-[#c9a667] border border-[#3e3420]",
+    success: "bg-[#18261c] text-[#8fa38d] border border-[#25392b]",
+    outline: "bg-transparent text-[#9ca3af] border border-[#232832]",
+    admin: "bg-[#14181f] text-[#cbd5e1] border border-[#2b3340]",
+    agent: "bg-[#18261c] text-[#8fa38d] border border-[#25392b]",
+    forensic: "bg-[#181c24] text-[#a0aec0] border border-[#27303d]"
   };
+  
   const sizes = {
-    sm: "px-1.5 py-0.5 text-[0.625rem] leading-none",
-    md: "px-2 py-0.5 text-[0.6875rem] leading-tight"
+    sm: "px-1.5 py-0.2 text-[9px]",
+    md: "px-2 py-0.5 text-[10px]",
+    lg: "px-2.5 py-1 text-xs"
   };
-  return /* @__PURE__ */ React.createElement("span", { className: cn(base, variants[normalized] || variants.default, sizes[size], className), ...props }, children);
+
+  return (
+    <span className={cn(base, variants[normalized] || variants.default, sizes[size], className)} {...props}>
+      {children}
+    </span>
+  );
 };
-export {
-  Badge
-};
+
+export { Badge };
+export default Badge;
+

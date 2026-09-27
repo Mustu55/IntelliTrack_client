@@ -14,9 +14,13 @@ import {
   Activity,
   Zap,
   HardDrive,
-  Layers
+  Layers,
+  FileText
 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import toast from "react-hot-toast";
+
 const INITIAL_SOURCES = [
   {
     id: "src-1",
@@ -26,7 +30,7 @@ const INITIAL_SOURCES = [
     lastSync: "4 mins ago",
     recordsCount: 42180,
     format: "REST API (Live Push)",
-    classification: "CJI STANDARD L4",
+    classification: "CJIS STANDARD L4",
     throughput: "340 ev/sec"
   },
   {
@@ -85,7 +89,8 @@ const INITIAL_SOURCES = [
     throughput: "18 ev/sec"
   }
 ];
-const DataSourcesPage = () => {
+
+export const DataSourcesPage = () => {
   const [sources, setSources] = useState(INITIAL_SOURCES);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
@@ -94,31 +99,29 @@ const DataSourcesPage = () => {
   const [newSourceType, setNewSourceType] = useState("CDR Cellular Tower Dumps");
   const [newSourceName, setNewSourceName] = useState("");
   const [uploadFileName, setUploadFileName] = useState("");
+
   const handleSyncNow = (id, name) => {
     toast.success(`Triggered sync job for ${name}`);
-    setSources(
-      (prev) => prev.map(
-        (s) => s.id === id ? { ...s, status: "SYNCING", lastSync: "Syncing right now..." } : s
-      )
+    setSources((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, status: "SYNCING", lastSync: "Syncing right now..." } : s))
     );
     setTimeout(() => {
-      setSources(
-        (prev) => prev.map(
-          (s) => s.id === id ? { ...s, status: "CONNECTED", lastSync: "Just now" } : s
-        )
+      setSources((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status: "CONNECTED", lastSync: "Just now" } : s))
       );
       toast.success(`Sync complete for ${name}`);
-    }, 2e3);
+    }, 1500);
   };
+
   const handleFinishWizard = () => {
     const created = {
       id: `src-${Date.now()}`,
-      name: newSourceName || "Custom Law Enforcement Telemetry Feed",
+      name: newSourceName || "Custom Telemetry Ingestion Feed",
       type: newSourceType,
       status: "CONNECTED",
       lastSync: "Just now",
-      recordsCount: Math.floor(1e3 + Math.random() * 5e3),
-      format: "Standardized CJIS Ingestion Pipeline",
+      recordsCount: Math.floor(1000 + Math.random() * 5000),
+      format: "Standardized Ingestion Pipeline",
       classification: "LAW ENFORCEMENT SENSITIVE",
       throughput: "250 ev/sec"
     };
@@ -129,174 +132,398 @@ const DataSourcesPage = () => {
     setUploadFileName("");
     toast.success("New intelligence data source connected successfully");
   };
+
   const filteredSources = sources.filter((s) => {
-    const matchesCat = filterCategory === "ALL" || filterCategory === "CDR" && s.type.includes("CDR") || filterCategory === "CAD" && s.type.includes("CAD") || filterCategory === "FIN" && s.type.includes("Financial") || filterCategory === "ALPR" && s.type.includes("ALPR") || filterCategory === "OSINT" && s.type.includes("OSINT");
-    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.type.toLowerCase().includes(searchQuery.toLowerCase()) || s.format.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCat =
+      filterCategory === "ALL" ||
+      (filterCategory === "CDR" && s.type.includes("CDR")) ||
+      (filterCategory === "CAD" && s.type.includes("CAD")) ||
+      (filterCategory === "FIN" && s.type.includes("Financial")) ||
+      (filterCategory === "ALPR" && s.type.includes("ALPR")) ||
+      (filterCategory === "OSINT" && s.type.includes("OSINT"));
+    const matchesSearch =
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.format.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
   });
-  return /* @__PURE__ */ React.createElement("div", { className: "space-y-6 max-w-7xl mx-auto font-sans pb-16" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-6 shadow-xl shadow-emerald-950/40 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "absolute top-0 right-0 w-96 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ React.createElement("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-mono text-[11px] uppercase tracking-wider mb-2" }, /* @__PURE__ */ React.createElement("span", { className: "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" }), /* @__PURE__ */ React.createElement(Database, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ React.createElement("span", null, "DATA INGESTION PIPELINE \u2022 ACTIVE HIGHWAY")), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl sm:text-3xl font-bold text-white tracking-tight" }, "Connected Intelligence Data Sources"), /* @__PURE__ */ React.createElement("p", { className: "text-xs sm:text-sm text-emerald-200/70 mt-1 max-w-2xl leading-relaxed" }, "Real-time API feeds, telecommunications cell tower dumps, financial transaction logs, CAD dispatches, and ALPR optical stream ingest.")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-3 self-start lg:self-auto" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => {
-        toast.success("Refreshing all live stream health checks...");
-      },
-      className: "px-3.5 py-2.5 rounded-lg bg-[#081411] hover:bg-[#132e26] border border-[#15382e] hover:border-emerald-500/40 text-emerald-300 font-mono text-xs font-semibold flex items-center gap-2 transition-all shadow-md"
-    },
-    /* @__PURE__ */ React.createElement(RefreshCw, { className: "w-3.5 h-3.5" }),
-    /* @__PURE__ */ React.createElement("span", { className: "hidden sm:inline" }, "Refresh Feeds")
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setIsWizardOpen(true),
-      className: "px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-950/60 transition-all transform active:scale-95"
-    },
-    /* @__PURE__ */ React.createElement(Plus, { className: "w-4 h-4" }),
-    /* @__PURE__ */ React.createElement("span", null, "Connect New Data Source")
-  )))), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 md:grid-cols-4 gap-4 font-mono" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-4 shadow-lg shadow-emerald-950/20 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-emerald-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "ACTIVE FEEDS"), /* @__PURE__ */ React.createElement(Activity, { className: "w-3.5 h-3.5 text-emerald-400 animate-pulse" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-white tracking-tight" }, "6 / 6 Live"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-emerald-300/70 mt-1 flex items-center gap-1" }, /* @__PURE__ */ React.createElement("span", { className: "w-1.5 h-1.5 rounded-full bg-emerald-400" }), /* @__PURE__ */ React.createElement("span", null, "100% Ingress Highway Uptime"))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-4 shadow-lg shadow-emerald-950/20 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-teal-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "TOTAL RECORDS"), /* @__PURE__ */ React.createElement(HardDrive, { className: "w-3.5 h-3.5 text-teal-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-white tracking-tight" }, "244,080"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-teal-300/70 mt-1" }, "+18.4% surge in last 24 hrs")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-4 shadow-lg shadow-emerald-950/20 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-emerald-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "INGRESS LATENCY"), /* @__PURE__ */ React.createElement(Zap, { className: "w-3.5 h-3.5 text-emerald-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-emerald-300 tracking-tight" }, "12 ms"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-emerald-300/70 mt-1" }, "p99 streaming queue backlog: 0")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-4 shadow-lg shadow-emerald-950/20 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[11px] text-emerald-400 font-semibold mb-1" }, /* @__PURE__ */ React.createElement("span", null, "CHAIN OF CUSTODY"), /* @__PURE__ */ React.createElement(ShieldCheck, { className: "w-3.5 h-3.5 text-emerald-400" })), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-emerald-400 tracking-tight" }, "100% Valid"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-emerald-300/70 mt-1" }, "FRE 902(14) Cryptographic Seal"))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-3 shadow-lg shadow-emerald-950/20 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap items-center gap-1.5 font-mono text-xs" }, [
-    { id: "ALL", label: "All Sources", count: sources.length },
-    { id: "CDR", label: "CDR Telephony", count: 1 },
-    { id: "CAD", label: "CAD / 911", count: 1 },
-    { id: "FIN", label: "Financial", count: 1 },
-    { id: "ALPR", label: "ALPR / Scans", count: 1 },
-    { id: "OSINT", label: "Darknet / OSINT", count: 1 }
-  ].map((cat) => /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      key: cat.id,
-      onClick: () => setFilterCategory(cat.id),
-      className: `px-3 py-1.5 rounded-lg font-semibold transition-all ${filterCategory === cat.id ? "bg-emerald-600 text-white shadow-md shadow-emerald-950/50" : "bg-[#081411] text-emerald-200/60 hover:text-emerald-300 hover:bg-[#132e26]"}`
-    },
-    cat.label,
-    " (",
-    cat.count,
-    ")"
-  ))), /* @__PURE__ */ React.createElement("div", { className: "relative min-w-[240px]" }, /* @__PURE__ */ React.createElement(Search, { className: "w-3.5 h-3.5 text-emerald-400/60 absolute left-3 top-1/2 -translate-y-1/2" }), /* @__PURE__ */ React.createElement(
-    "input",
-    {
-      type: "text",
-      placeholder: "Search feed name, protocol, format...",
-      value: searchQuery,
-      onChange: (e) => setSearchQuery(e.target.value),
-      className: "w-full bg-[#081411] border border-[#15382e] focus:border-emerald-500 rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-emerald-200/40 focus:outline-none transition-colors font-mono"
-    }
-  ))), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" }, filteredSources.map((src) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: src.id,
-      className: "bg-[#0e221c] border border-[#15382e] hover:border-emerald-500/50 rounded-xl p-5 flex flex-col justify-between shadow-xl shadow-emerald-950/20 transition-all group"
-    },
-    /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "flex items-start justify-between gap-2 mb-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-[10px] font-mono uppercase font-bold text-emerald-300 bg-[#081411] px-2.5 py-1 rounded-md border border-[#15382e]" }, src.type), /* @__PURE__ */ React.createElement(
-      "span",
-      {
-        className: `text-[9px] font-mono px-2 py-0.5 rounded-md font-bold uppercase ${src.status === "CONNECTED" ? "bg-emerald-950/80 text-emerald-300 border border-emerald-500/30" : src.status === "SYNCING" ? "bg-teal-950/80 text-teal-300 border border-teal-500/30 animate-pulse" : "bg-amber-950/80 text-amber-300 border border-amber-500/30"}`
-      },
-      "\u25CF ",
-      src.status
-    )), /* @__PURE__ */ React.createElement("h3", { className: "text-base font-bold text-white group-hover:text-emerald-300 transition-colors mb-1.5 leading-snug" }, src.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono text-emerald-200/60 mb-3 flex items-center gap-1.5" }, /* @__PURE__ */ React.createElement(Layers, { className: "w-3.5 h-3.5 text-teal-400" }), /* @__PURE__ */ React.createElement("span", null, src.format)), /* @__PURE__ */ React.createElement("div", { className: "p-3 rounded-lg bg-[#081411] border border-[#15382e] font-mono text-xs space-y-2 mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between items-center" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "Total Records:"), /* @__PURE__ */ React.createElement("span", { className: "text-white font-bold" }, src.recordsCount.toLocaleString())), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between items-center" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "Throughput:"), /* @__PURE__ */ React.createElement("span", { className: "text-teal-300 font-bold" }, src.throughput)), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between items-center" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "Last Synced:"), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-400 font-semibold" }, src.lastSync)), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between items-center text-[10px] pt-1 border-t border-[#15382e]" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/40" }, "Security Classification:"), /* @__PURE__ */ React.createElement("span", { className: "text-slate-300 font-semibold" }, src.classification)))),
-    /* @__PURE__ */ React.createElement("div", { className: "pt-3 border-t border-[#15382e] flex items-center justify-between font-mono text-xs" }, /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        onClick: () => handleSyncNow(src.id, src.name),
-        className: "px-3 py-1.5 rounded-lg bg-[#081411] hover:bg-[#132e26] border border-[#15382e] text-emerald-300 hover:text-emerald-200 flex items-center gap-1.5 transition-all shadow-sm",
-        title: "Force Synchronization"
-      },
-      /* @__PURE__ */ React.createElement(RefreshCw, { className: "w-3.5 h-3.5" }),
-      /* @__PURE__ */ React.createElement("span", null, "Sync Now")
-    ), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5" }, /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        onClick: () => toast.success(`Viewing mapping schema for ${src.name}`),
-        className: "p-2 rounded-lg bg-[#081411] border border-[#15382e] hover:border-emerald-500/40 text-emerald-200/60 hover:text-emerald-300 transition-colors",
-        title: "Configure Mapping"
-      },
-      /* @__PURE__ */ React.createElement(Settings, { className: "w-3.5 h-3.5" })
-    ), /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        onClick: () => {
-          setSources(sources.filter((s) => s.id !== src.id));
-          toast.success(`Removed data source ${src.name}`);
-        },
-        className: "p-2 rounded-lg bg-[#081411] border border-[#15382e] hover:border-red-500/40 text-emerald-200/60 hover:text-red-400 transition-colors",
-        title: "Remove Source"
-      },
-      /* @__PURE__ */ React.createElement(Trash2, { className: "w-3.5 h-3.5" })
-    )))
-  ))), isWizardOpen && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm select-none font-sans" }, /* @__PURE__ */ React.createElement("div", { className: "w-full max-w-xl bg-[#0e221c] border border-emerald-500/50 rounded-2xl shadow-2xl shadow-emerald-950/80 overflow-hidden animate-in fade-in zoom-in-95 duration-150" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#081411] px-6 py-4 border-b border-[#15382e] flex items-center justify-between" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h2", { className: "text-base font-bold text-white flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Database, { className: "w-4 h-4 text-emerald-400" }), /* @__PURE__ */ React.createElement("span", null, "Connect Ingestion Source Wizard")), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-mono text-emerald-400 mt-0.5" }, "STEP ", wizardStep, " OF 4 \u2014", " ", wizardStep === 1 ? "SOURCE TYPE" : wizardStep === 2 ? "PAYLOAD CONNECTION" : wizardStep === 3 ? "SCHEMA MAPPING" : "VERIFY EXTRACT")), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setIsWizardOpen(false),
-      className: "p-1.5 rounded-lg text-emerald-200/60 hover:text-white hover:bg-[#132e26] transition-colors"
-    },
-    /* @__PURE__ */ React.createElement(X, { className: "w-4 h-4" })
-  )), /* @__PURE__ */ React.createElement("div", { className: "p-6 space-y-4" }, wizardStep === 1 && /* @__PURE__ */ React.createElement("div", { className: "space-y-3 font-mono text-xs" }, /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-sans text-sm font-semibold" }, "Select Data Source Category:"), [
-    "CDR Cellular Tower Dumps (Telephony / VoLTE)",
-    "CAD 911 Incident Records / Police Reports",
-    "Financial Records & Hawala Transaction Ledgers",
-    "Port Authority & Border Crossing ALPR Scans",
-    "Surveillance Video Feeds & Latent Biometrics",
-    "Darknet Forum & Messaging Intercepts"
-  ].map((t) => /* @__PURE__ */ React.createElement(
-    "label",
-    {
-      key: t,
-      className: `flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${newSourceType === t ? "bg-[#132e26] border-emerald-500 text-white shadow-sm" : "bg-[#081411] border-[#15382e] text-emerald-200/70 hover:border-emerald-600/40"}`
-    },
-    /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "radio",
-        name: "sourceType",
-        checked: newSourceType === t,
-        onChange: () => setNewSourceType(t),
-        className: "text-emerald-500 focus:ring-0 accent-emerald-500"
-      }
-    ),
-    /* @__PURE__ */ React.createElement("span", { className: "font-sans font-medium" }, t)
-  ))), wizardStep === 2 && /* @__PURE__ */ React.createElement("div", { className: "space-y-4 font-mono text-xs" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { className: "text-slate-300 block mb-1 font-semibold" }, "Source Name / Feed Title"), /* @__PURE__ */ React.createElement(
-    "input",
-    {
-      type: "text",
-      placeholder: "e.g., Manhattan North Task Force CDR Dump #12",
-      value: newSourceName,
-      onChange: (e) => setNewSourceName(e.target.value),
-      className: "w-full bg-[#081411] border border-[#15382e] rounded-lg px-3.5 py-2 text-slate-100 focus:outline-none focus:border-emerald-500 transition-colors"
-    }
-  )), /* @__PURE__ */ React.createElement("div", { className: "p-6 rounded-xl border-2 border-dashed border-[#15382e] hover:border-emerald-500/50 bg-[#081411] text-center space-y-2.5 transition-colors" }, /* @__PURE__ */ React.createElement(UploadCloud, { className: "w-10 h-10 text-emerald-400 mx-auto" }), /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-sans text-xs font-semibold" }, "Drag & Drop PCAP, CSV, XML, or JSON Telemetry Files"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-emerald-200/50" }, "Supports FRE 902(14) compliant digital custody packaging up to 2.5 GB"), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      type: "button",
-      onClick: () => setUploadFileName("CDR_CELL_TOWER_SECTOR4_DUMP.CSV"),
-      className: "px-3.5 py-1.5 rounded-lg bg-[#132e26] hover:bg-emerald-950 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition-colors"
-    },
-    "Select Sample Evidence File"
-  ), uploadFileName && /* @__PURE__ */ React.createElement("div", { className: "text-emerald-400 text-xs font-semibold pt-1 flex items-center justify-center gap-1.5" }, /* @__PURE__ */ React.createElement(CheckCircle2, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ React.createElement("span", null, "Loaded: ", uploadFileName, " (14.2 MB \u2022 SHA-256 Verified)")))), wizardStep === 3 && /* @__PURE__ */ React.createElement("div", { className: "space-y-3 font-mono text-xs" }, /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-sans text-xs font-semibold" }, "Automatic Field Schema Mapping:"), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 p-3.5 rounded-xl bg-[#081411] border border-[#15382e] text-[11px]" }, /* @__PURE__ */ React.createElement("div", { className: "flex justify-between py-1.5 border-b border-[#15382e]" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "CALLER_ANI_E164 \u2794"), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-300 font-bold" }, "entity.phone.number")), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between py-1.5 border-b border-[#15382e]" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "CALLED_DIALED_DIGITS \u2794"), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-300 font-bold" }, "entity.phone.target")), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between py-1.5 border-b border-[#15382e]" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "AZIMUTH_ANTENNA_BEAM \u2794"), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-300 font-bold" }, "geo.cell_tower.bearing")), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between py-1.5" }, /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50" }, "IMEI_HARDWARE_SERIAL \u2794"), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-300 font-bold" }, "device.imei.fingerprint")))), wizardStep === 4 && /* @__PURE__ */ React.createElement("div", { className: "space-y-3 font-mono text-xs" }, /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-sans text-xs font-semibold" }, "Preview Extracted Entities (Sample 5 rows parsed):"), /* @__PURE__ */ React.createElement("div", { className: "p-3.5 rounded-xl bg-[#081411] border border-[#15382e] space-y-2.5 text-[11px]" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-slate-200" }, /* @__PURE__ */ React.createElement("span", null, "POI Extracted: ", /* @__PURE__ */ React.createElement("strong", null, "Viktor Sokolov (Alias: Sokol)")), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-400 font-bold" }, "CONFIDENCE: 96%")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-slate-200" }, /* @__PURE__ */ React.createElement("span", null, "Burner Phone: ", /* @__PURE__ */ React.createElement("strong", null, "+1 (555) 019-8821")), /* @__PURE__ */ React.createElement("span", { className: "text-teal-300 font-bold" }, "14 CALL RECORDS")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-slate-200" }, /* @__PURE__ */ React.createElement("span", null, "Cell Tower Azimuth: ", /* @__PURE__ */ React.createElement("strong", null, "Tower #42 Sector B")), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-400 font-bold" }, "CO-LOCATED"))))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#081411] px-6 py-3.5 border-t border-[#15382e] flex items-center justify-between font-mono text-xs" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      disabled: wizardStep === 1,
-      onClick: () => setWizardStep(wizardStep - 1),
-      className: "px-3.5 py-1.5 rounded-lg bg-[#0e221c] border border-[#15382e] hover:bg-[#132e26] disabled:opacity-40 text-slate-300 transition-colors"
-    },
-    "Back"
-  ), wizardStep < 4 ? /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setWizardStep(wizardStep + 1),
-      className: "px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5 transition-all shadow-md"
-    },
-    /* @__PURE__ */ React.createElement("span", null, "Next Step"),
-    /* @__PURE__ */ React.createElement(ArrowRight, { className: "w-3.5 h-3.5" })
-  ) : /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: handleFinishWizard,
-      className: "px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold transition-all shadow-md"
-    },
-    "Complete Ingestion"
-  )))));
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-16">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pb-4 border-b border-[#222731]">
+        <div>
+          <div className="flex items-center gap-2 text-tactical-neutral-500 text-[11px] uppercase tracking-wider font-mono mb-1">
+            <span>INGESTION PIPELINES</span>
+            <span>/</span>
+            <span className="text-tactical-sage-400 font-semibold">DATA SOURCES</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            Connected Intelligence Data Feeds
+          </h1>
+          <p className="text-xs sm:text-sm text-tactical-neutral-400 mt-1 max-w-2xl leading-relaxed">
+            Real-time API streams, telecommunications cell tower dumps, financial transaction logs, and ALPR ingest
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => toast.success("Refreshing all stream health checks...")}
+            icon={<RefreshCw className="w-3.5 h-3.5" />}
+            className="text-xs font-mono border-[#222731]"
+          >
+            Refresh Feeds
+          </Button>
+          <Button
+            variant="sage"
+            size="sm"
+            onClick={() => setIsWizardOpen(true)}
+            icon={<Plus className="w-3.5 h-3.5" />}
+            className="text-xs font-mono"
+          >
+            Connect Source
+          </Button>
+        </div>
+      </div>
+
+      {/* KPI Stats Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-mono text-xs">
+        <div className="bg-[#14171c] border border-[#222731] rounded-xl p-4">
+          <div className="flex items-center justify-between text-[11px] text-tactical-neutral-400 font-semibold mb-1">
+            <span>ACTIVE FEEDS</span>
+            <Activity className="w-3.5 h-3.5 text-tactical-sage-400" />
+          </div>
+          <div className="text-xl font-bold text-white tracking-tight">6 / 6 Live</div>
+          <div className="text-[10px] text-tactical-neutral-500 mt-1">100% Ingress Highway Uptime</div>
+        </div>
+
+        <div className="bg-[#14171c] border border-[#222731] rounded-xl p-4">
+          <div className="flex items-center justify-between text-[11px] text-tactical-neutral-400 font-semibold mb-1">
+            <span>TOTAL RECORDS</span>
+            <HardDrive className="w-3.5 h-3.5 text-tactical-neutral-400" />
+          </div>
+          <div className="text-xl font-bold text-white tracking-tight">244,080</div>
+          <div className="text-[10px] text-tactical-neutral-500 mt-1">+18.4% surge in last 24 hrs</div>
+        </div>
+
+        <div className="bg-[#14171c] border border-[#222731] rounded-xl p-4">
+          <div className="flex items-center justify-between text-[11px] text-tactical-neutral-400 font-semibold mb-1">
+            <span>INGRESS LATENCY</span>
+            <Zap className="w-3.5 h-3.5 text-tactical-sage-400" />
+          </div>
+          <div className="text-xl font-bold text-tactical-sage-400 tracking-tight">12 ms</div>
+          <div className="text-[10px] text-tactical-neutral-500 mt-1">Queue backlog: 0</div>
+        </div>
+
+        <div className="bg-[#14171c] border border-[#222731] rounded-xl p-4">
+          <div className="flex items-center justify-between text-[11px] text-tactical-neutral-400 font-semibold mb-1">
+            <span>CHAIN OF CUSTODY</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-tactical-success-400" />
+          </div>
+          <div className="text-xl font-bold text-tactical-success-400 tracking-tight">100% Valid</div>
+          <div className="text-[10px] text-tactical-neutral-500 mt-1">FRE 902(14) Cryptographic Seal</div>
+        </div>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="bg-[#14171c] border border-[#222731] rounded-xl p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
+          {[
+            { id: "ALL", label: "All Sources", count: sources.length },
+            { id: "CDR", label: "CDR Telephony", count: 1 },
+            { id: "CAD", label: "CAD / 911", count: 1 },
+            { id: "FIN", label: "Financial", count: 1 },
+            { id: "ALPR", label: "ALPR", count: 1 },
+            { id: "OSINT", label: "Darknet / OSINT", count: 1 }
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setFilterCategory(cat.id)}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                filterCategory === cat.id
+                  ? "bg-[#1c222b] text-white border border-[#2e3644] shadow-sm"
+                  : "bg-[#101317] text-tactical-neutral-400 hover:text-white border border-[#222731]"
+              }`}
+            >
+              {cat.label} ({cat.count})
+            </button>
+          ))}
+        </div>
+
+        <div className="relative min-w-[240px]">
+          <Search className="w-3.5 h-3.5 text-tactical-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search feeds..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[#101317] border border-[#222731] focus:border-tactical-sage-400/50 rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-tactical-neutral-600 focus:outline-none transition-colors font-mono"
+          />
+        </div>
+      </div>
+
+      {/* Grid of Data Sources */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredSources.map((src) => (
+          <div
+            key={src.id}
+            className="bg-[#14171c] border border-[#222731] hover:border-[#2e3644] rounded-xl p-5 flex flex-col justify-between transition-all"
+          >
+            <div>
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <span className="text-[10px] font-mono uppercase font-bold text-tactical-sage-400 bg-[#101317] px-2.5 py-1 rounded-md border border-[#222731]">
+                  {src.type}
+                </span>
+                <Badge
+                  variant={src.status === "CONNECTED" ? "success" : src.status === "SYNCING" ? "warning" : "danger"}
+                  size="sm"
+                  className="font-mono text-[9px] uppercase"
+                >
+                  ● {src.status}
+                </Badge>
+              </div>
+
+              <h3 className="text-sm font-bold text-white mb-1.5 leading-snug">
+                {src.name}
+              </h3>
+
+              <div className="text-xs font-mono text-tactical-neutral-400 mb-3 flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-tactical-neutral-500" />
+                <span>{src.format}</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[#101317] border border-[#222731] font-mono text-xs space-y-2 mb-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-tactical-neutral-500">Records:</span>
+                  <span className="text-white font-bold">{src.recordsCount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-tactical-neutral-500">Throughput:</span>
+                  <span className="text-tactical-sage-400 font-bold">{src.throughput}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-tactical-neutral-500">Last Synced:</span>
+                  <span className="text-tactical-neutral-300 font-semibold">{src.lastSync}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-[#222731] flex items-center justify-between font-mono text-xs">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleSyncNow(src.id, src.name)}
+                icon={<RefreshCw className="w-3 h-3" />}
+                className="text-[11px] py-1 border-[#222731]"
+              >
+                Sync Now
+              </Button>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => toast.success(`Viewing schema for ${src.name}`)}
+                  className="p-1.5 rounded-lg bg-[#101317] border border-[#222731] hover:border-[#2e3644] text-tactical-neutral-400 hover:text-white transition-colors"
+                  title="Configure Mapping"
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => {
+                    setSources(sources.filter((s) => s.id !== src.id));
+                    toast.success(`Removed data source ${src.name}`);
+                  }}
+                  className="p-1.5 rounded-lg bg-[#101317] border border-[#222731] hover:border-tactical-danger-500/40 text-tactical-neutral-400 hover:text-tactical-danger-400 transition-colors"
+                  title="Remove Source"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Wizard Modal */}
+      {isWizardOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm select-none font-sans">
+          <div className="w-full max-w-xl bg-[#14171c] border border-[#222731] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="bg-[#101317] px-6 py-4 border-b border-[#222731] flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <Database className="w-4 h-4 text-tactical-sage-400" />
+                  <span>Connect Ingestion Source Wizard</span>
+                </h2>
+                <div className="text-[11px] font-mono text-tactical-neutral-400 mt-0.5">
+                  STEP {wizardStep} OF 4 —{" "}
+                  {wizardStep === 1
+                    ? "SOURCE TYPE"
+                    : wizardStep === 2
+                    ? "PAYLOAD CONNECTION"
+                    : wizardStep === 3
+                    ? "SCHEMA MAPPING"
+                    : "VERIFY EXTRACT"}
+                </div>
+              </div>
+              <button
+                onClick={() => setIsWizardOpen(false)}
+                className="p-1.5 rounded-lg text-tactical-neutral-400 hover:text-white hover:bg-[#181d24] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {wizardStep === 1 && (
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="text-tactical-neutral-300 font-sans text-sm font-semibold">
+                    Select Data Source Category:
+                  </div>
+                  {[
+                    "CDR Cellular Tower Dumps (Telephony / VoLTE)",
+                    "CAD 911 Incident Records / Police Reports",
+                    "Financial Records & Hawala Transaction Ledgers",
+                    "Port Authority & Border Crossing ALPR Scans",
+                    "Surveillance Video Feeds & Latent Biometrics",
+                    "Darknet Forum & Messaging Intercepts"
+                  ].map((t) => (
+                    <label
+                      key={t}
+                      className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                        newSourceType === t
+                          ? "bg-[#1c222b] border-tactical-sage-400/60 text-white shadow-sm"
+                          : "bg-[#101317] border-[#222731] text-tactical-neutral-400 hover:border-[#2e3644]"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="sourceType"
+                        checked={newSourceType === t}
+                        onChange={() => setNewSourceType(t)}
+                        className="text-tactical-sage-500 focus:ring-0 accent-tactical-sage-500"
+                      />
+                      <span className="font-sans font-medium">{t}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {wizardStep === 2 && (
+                <div className="space-y-4 font-mono text-xs">
+                  <div>
+                    <label className="text-tactical-neutral-300 block mb-1 font-semibold">
+                      Source Name / Feed Title
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Task Force Cell Tower Sector 4"
+                      value={newSourceName}
+                      onChange={(e) => setNewSourceName(e.target.value)}
+                      className="w-full bg-[#101317] border border-[#222731] rounded-lg px-3.5 py-2 text-white focus:outline-none focus:border-tactical-sage-400/50 transition-colors"
+                    />
+                  </div>
+
+                  <div className="p-6 rounded-xl border-2 border-dashed border-[#222731] hover:border-[#2e3644] bg-[#101317] text-center space-y-2.5 transition-colors">
+                    <UploadCloud className="w-10 h-10 text-tactical-sage-400 mx-auto" />
+                    <div className="text-white font-sans text-xs font-semibold">
+                      Drag & Drop PCAP, CSV, XML, or JSON Telemetry Files
+                    </div>
+                    <div className="text-[10px] text-tactical-neutral-500">
+                      Supports FRE 902(14) digital custody packaging
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setUploadFileName("CDR_CELL_TOWER_SECTOR4_DUMP.CSV")}
+                      className="px-3.5 py-1.5 rounded-lg bg-[#181d24] hover:bg-[#1f242c] border border-[#222731] text-tactical-sage-400 text-xs font-semibold transition-colors"
+                    >
+                      Select Sample File
+                    </button>
+                    {uploadFileName && (
+                      <div className="text-tactical-sage-400 text-xs font-semibold pt-1 flex items-center justify-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Loaded: {uploadFileName} (14.2 MB · Verified)</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {wizardStep === 3 && (
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="text-white font-sans text-xs font-semibold">
+                    Automatic Field Schema Mapping:
+                  </div>
+                  <div className="space-y-2 p-3.5 rounded-xl bg-[#101317] border border-[#222731] text-[11px]">
+                    <div className="flex justify-between py-1.5 border-b border-[#222731]">
+                      <span className="text-tactical-neutral-400">CALLER_ANI_E164 →</span>
+                      <span className="text-tactical-sage-400 font-bold">entity.phone.number</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 border-b border-[#222731]">
+                      <span className="text-tactical-neutral-400">CALLED_DIALED_DIGITS →</span>
+                      <span className="text-tactical-sage-400 font-bold">entity.phone.target</span>
+                    </div>
+                    <div className="flex justify-between py-1.5">
+                      <span className="text-tactical-neutral-400">IMEI_HARDWARE_SERIAL →</span>
+                      <span className="text-tactical-sage-400 font-bold">device.imei.fingerprint</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {wizardStep === 4 && (
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="text-white font-sans text-xs font-semibold">
+                    Preview Extracted Entities:
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-[#101317] border border-[#222731] space-y-2 text-[11px]">
+                    <div className="flex items-center justify-between text-white">
+                      <span>POI Extracted: <strong>Viktor Sokolov</strong></span>
+                      <Badge variant="success" size="sm">96% CONF</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-white">
+                      <span>Burner Phone: <strong>+1 (555) 019-8821</strong></span>
+                      <Badge variant="neutral" size="sm">14 CALLS</Badge>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-[#101317] px-6 py-3.5 border-t border-[#222731] flex items-center justify-between font-mono text-xs">
+              <Button
+                variant="secondary"
+                size="sm"
+                disabled={wizardStep === 1}
+                onClick={() => setWizardStep(wizardStep - 1)}
+                className="border-[#222731]"
+              >
+                Back
+              </Button>
+              {wizardStep < 4 ? (
+                <Button
+                  variant="sage"
+                  size="sm"
+                  onClick={() => setWizardStep(wizardStep + 1)}
+                  icon={<ArrowRight className="w-3.5 h-3.5" />}
+                >
+                  Next Step
+                </Button>
+              ) : (
+                <Button
+                  variant="sage"
+                  size="sm"
+                  onClick={handleFinishWizard}
+                >
+                  Complete Ingestion
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
-var stdin_default = DataSourcesPage;
-export {
-  DataSourcesPage,
-  stdin_default as default
-};
+
+export default DataSourcesPage;

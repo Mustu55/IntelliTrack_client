@@ -1,57 +1,117 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { Shield, Smartphone, Key, CheckCircle, ArrowLeft } from "lucide-react";
+import { Shield, Smartphone, CheckCircle, ArrowLeft } from "lucide-react";
+
 const OtpVerificationPage = () => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState("");
-  const [verifying, setVerifying] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) return;
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // auto focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setVerifying(true);
+    setSubmitted(true);
     setTimeout(() => {
-      setVerifying(false);
-      setSuccess(true);
-      setTimeout(() => {
-        navigate("/admin/dashboard");
-      }, 1200);
-    }, 800);
+      navigate("/dashboard");
+    }, 1200);
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "min-h-screen bg-navy-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-mono select-none" }, /* @__PURE__ */ React.createElement("div", { className: "sm:mx-auto sm:w-full sm:max-w-md text-center" }, /* @__PURE__ */ React.createElement(Link, { to: "/", className: "inline-flex items-center gap-2 mb-4" }, /* @__PURE__ */ React.createElement("div", { className: "w-10 h-10 rounded bg-navy-800 flex items-center justify-center text-white shadow-sm border border-steel-600" }, /* @__PURE__ */ React.createElement(Shield, { className: "w-6 h-6 fill-steel-600/30 stroke-steel-400" })), /* @__PURE__ */ React.createElement("span", { className: "font-bold text-lg tracking-wider text-slate-100" }, "INTELLITRACK")), /* @__PURE__ */ React.createElement("h2", { className: "text-xl font-bold uppercase tracking-tight text-white" }, "PIV / YubiKey Challenge"), /* @__PURE__ */ React.createElement("p", { className: "mt-1 text-xs text-slate-400" }, "CJIS Level 4 Multi-Factor Cryptographic Authentication")), /* @__PURE__ */ React.createElement("div", { className: "mt-6 sm:mx-auto sm:w-full sm:max-w-md" }, /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 py-8 px-6 sm:px-10 border border-navy-800 rounded shadow-xl" }, success ? /* @__PURE__ */ React.createElement("div", { className: "text-center py-4 space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "w-12 h-12 rounded-full bg-threat-low/20 border border-threat-low/40 flex items-center justify-center text-threat-low mx-auto" }, /* @__PURE__ */ React.createElement(CheckCircle, { className: "w-6 h-6" })), /* @__PURE__ */ React.createElement("h3", { className: "font-bold text-sm uppercase text-white" }, "HARDWARE TOKEN VERIFIED"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-slate-300" }, "Session cryptographically bound to hardware terminal. Initializing operational workspace...")) : /* @__PURE__ */ React.createElement("form", { onSubmit: handleSubmit, className: "space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "p-3 bg-navy-950 rounded border border-navy-800 flex items-center gap-3" }, /* @__PURE__ */ React.createElement(Smartphone, { className: "w-5 h-5 text-steel-400 shrink-0" }), /* @__PURE__ */ React.createElement("div", { className: "text-xs text-slate-300" }, "Touch your YubiKey FIPS or enter the 6-digit TOTP challenge from your agency authenticator.")), /* @__PURE__ */ React.createElement(
-    Input,
-    {
-      label: "6-Digit Verification Token",
-      value: otp,
-      onChange: (e) => setOtp(e.target.value),
-      placeholder: "000 000",
-      maxLength: 6,
-      autoFocus: true,
-      className: "text-center tracking-widest text-lg font-bold",
-      required: true
-    }
-  ), /* @__PURE__ */ React.createElement(
-    Button,
-    {
-      type: "submit",
-      variant: "primary",
-      className: "w-full bg-steel-600 hover:bg-steel-500 text-white font-mono uppercase tracking-wide text-xs py-2.5",
-      size: "lg",
-      disabled: verifying || otp.length < 6,
-      icon: /* @__PURE__ */ React.createElement(Key, { className: "w-4 h-4" })
-    },
-    verifying ? "Validating Token Signature..." : "Verify Cryptographic Pin"
-  )), /* @__PURE__ */ React.createElement("div", { className: "mt-6 text-center" }, /* @__PURE__ */ React.createElement(
-    Link,
-    {
-      to: "/login",
-      className: "inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-steel-400 transition-colors"
-    },
-    /* @__PURE__ */ React.createElement(ArrowLeft, { className: "w-3 h-3" }),
-    /* @__PURE__ */ React.createElement("span", null, "Back to Credentials")
-  )))));
+
+  return (
+    <div className="min-h-screen bg-[#0d0f11] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans select-none antialiased">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
+        <Link to="/" className="inline-flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-md bg-[#181c22] flex items-center justify-center text-[#9cae9b] border border-[#2a313d] shadow-xs">
+            <Shield className="w-4 h-4" />
+          </div>
+          <span className="font-bold text-sm tracking-wider uppercase text-white font-sans">
+            INTELLITRACK
+          </span>
+        </Link>
+        <h2 className="text-xl font-semibold text-white tracking-tight">
+          Two-Factor Hardware Verification
+        </h2>
+        <p className="mt-1 text-xs text-[#9ca3af]">
+          Enter 6-digit TOTP token generated by authorized authenticator
+        </p>
+      </div>
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-[#14171c] py-8 px-6 sm:px-8 border border-[#222731] rounded-xl shadow-2xl">
+          {submitted ? (
+            <div className="text-center py-4 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-[#18261c] border border-[#25392b] flex items-center justify-center text-[#8fa38d] mx-auto">
+                <CheckCircle className="w-6 h-6" />
+              </div>
+              <h3 className="font-semibold text-sm uppercase font-mono text-white">
+                MFA Token Verified
+              </h3>
+              <p className="text-xs text-[#9ca3af]">
+                Establishing hardware-bound session...
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex justify-center gap-2.5">
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`otp-${index}`}
+                    type="text"
+                    maxLength="1"
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-11 h-12 text-center text-lg font-mono font-bold bg-[#101317] border border-[#222731] rounded-md text-white focus:outline-none focus:border-[#9cae9b] transition-colors"
+                  />
+                ))}
+              </div>
+
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs py-2.5 rounded-md"
+                size="md"
+                icon={<Smartphone className="w-3.5 h-3.5" />}
+              >
+                Verify & Enter Workspace
+              </Button>
+            </form>
+          )}
+
+          <div className="mt-6 text-center">
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1.5 text-xs text-[#606875] hover:text-[#9cae9b] transition-colors"
+            >
+              <ArrowLeft className="w-3 h-3" />
+              <span>Back to Login</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
-export {
-  OtpVerificationPage
-};
+
+export { OtpVerificationPage };
+export default OtpVerificationPage;

@@ -1,38 +1,43 @@
 import React from "react";
 import { cn } from "../../utils/cn";
+
 const Button = React.forwardRef(
   ({ className, variant = "primary", size = "md", isLoading, disabled, icon, children, ...props }, ref) => {
-    const baseStyles = "inline-flex items-center justify-center font-mono text-xs tracking-wider uppercase font-semibold transition-all duration-150 select-none cursor-pointer focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
+    const baseStyles = "inline-flex items-center justify-center text-xs font-medium transition-all duration-150 select-none cursor-pointer focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed rounded-md";
     const normalizedVariant = variant === "danger" ? "destructive" : variant;
+    
     const variants = {
-      primary: "bg-tactical-primary-700 text-white shadow-xs hover:bg-tactical-primary-800 active:scale-[0.99] border border-tactical-primary-600",
-      secondary: "bg-white dark:bg-tactical-neutral-900 text-tactical-neutral-800 dark:text-tactical-neutral-200 border border-tactical-neutral-300 dark:border-tactical-neutral-700 hover:bg-tactical-neutral-100 dark:hover:bg-tactical-neutral-800",
-      destructive: "bg-tactical-danger-50 dark:bg-tactical-danger-950/80 text-tactical-danger-700 dark:text-tactical-danger-300 border border-tactical-danger-300 dark:border-tactical-danger-800 hover:bg-tactical-danger-600 hover:text-white",
-      outline: "border border-tactical-neutral-300 dark:border-tactical-neutral-700 text-tactical-neutral-800 dark:text-tactical-neutral-200 bg-transparent hover:bg-tactical-neutral-100 dark:hover:bg-tactical-neutral-800",
-      ghost: "text-tactical-neutral-600 dark:text-tactical-neutral-400 hover:text-tactical-neutral-900 hover:bg-tactical-neutral-100 dark:hover:bg-tactical-neutral-800",
-      link: "text-tactical-primary-600 underline-offset-4 hover:underline p-0 h-auto font-normal lowercase"
+      primary: "bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] active:bg-[#7f917e] border border-[#9cae9b] font-medium shadow-xs",
+      secondary: "bg-[#181c22] text-[#d1d5db] border border-[#232832] hover:bg-[#20252e] hover:text-white active:bg-[#15191f]",
+      destructive: "bg-[#2b1719] text-[#dc7869] border border-[#442327] hover:bg-[#381e20] hover:text-[#f87171]",
+      outline: "border border-[#262b35] text-[#9ca3af] bg-transparent hover:bg-[#161a20] hover:text-[#f3f4f6] hover:border-[#353c4a]",
+      ghost: "text-[#9ca3af] hover:text-white hover:bg-[#181c22]",
+      link: "text-[#9cae9b] underline-offset-4 hover:underline p-0 h-auto font-normal"
     };
+    
     const sizes = {
-      sm: "h-8 px-2.5 rounded text-xs gap-1.5",
-      md: "h-9 px-4 rounded text-xs gap-2",
-      lg: "h-11 px-6 rounded text-sm gap-2.5",
-      icon: "h-9 w-9 p-0 rounded"
+      sm: "h-7 px-2.5 text-xs gap-1.5",
+      md: "h-8.5 px-3.5 text-xs gap-2",
+      lg: "h-10 px-5 text-sm gap-2.5",
+      icon: "h-8 w-8 p-0"
     };
-    return /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        ref,
-        disabled: disabled || isLoading,
-        className: cn(baseStyles, variants[normalizedVariant], sizes[size], className),
-        ...props
-      },
-      isLoading && /* @__PURE__ */ React.createElement("span", { className: "w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-1.5" }),
-      !isLoading && icon && /* @__PURE__ */ React.createElement("span", { className: "shrink-0" }, icon),
-      children
+
+    return (
+      <button
+        ref={ref}
+        disabled={disabled || isLoading}
+        className={cn(baseStyles, variants[normalizedVariant] || variants.primary, sizes[size], className)}
+        {...props}
+      >
+        {isLoading && <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin mr-1.5" />}
+        {!isLoading && icon && <span className="shrink-0">{icon}</span>}
+        {children}
+      </button>
     );
   }
 );
+
 Button.displayName = "Button";
-export {
-  Button
-};
+export { Button };
+export default Button;
+

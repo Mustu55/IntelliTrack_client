@@ -7,127 +7,341 @@ import {
   MapPin,
   Clock,
   Flame,
-  Database,
-  Sliders,
+  FileCheck,
+  FileText,
   Lock,
-  Download
+  Download,
+  Plus,
+  ArrowRight,
+  Shield,
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
+  ChevronRight
 } from "lucide-react";
 import { useActiveCase, ACTIVE_CASES_ROSTER } from "@/context/CaseContext";
+
 const CaseCockpitPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { activeCase, setActiveCaseId } = useActiveCase();
+  const { activeCase } = useActiveCase();
   const [activeTab, setActiveTab] = useState("overview");
-  const caseData = ACTIVE_CASES_ROSTER.find((c) => c.id === id) || activeCase;
-  return /* @__PURE__ */ React.createElement("div", { className: "space-y-6 max-w-7xl mx-auto font-sans pb-12" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#1c140d] border border-amber-900/40 rounded-2xl p-6 shadow-xl relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "absolute top-0 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ React.createElement("div", { className: "flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mb-2 font-mono text-[11px]" }, /* @__PURE__ */ React.createElement("span", { className: "px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-300 font-bold border border-amber-700/60 shadow-xs" }, caseData.caseNumber), /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded-md bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30" }, caseData.priority, " PRIORITY"), caseData.grandJuryProtected && /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded-md bg-amber-950/80 border border-amber-600/50 text-amber-300 font-mono font-semibold flex items-center gap-1" }, /* @__PURE__ */ React.createElement(Lock, { className: "w-3 h-3 text-amber-400" }), " FED. R. CRIM. P. 6(e) SEALED")), /* @__PURE__ */ React.createElement("h1", { className: "text-xl sm:text-2xl font-bold text-white tracking-tight" }, caseData.title), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-amber-200/70 mt-1 font-mono" }, "Lead Investigator: ", /* @__PURE__ */ React.createElement("strong", { className: "text-amber-100" }, caseData.leadInvestigator), " (Badge #", caseData.badgeNumber, ") \u2022 Classification: ", caseData.classification)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2.5 shrink-0" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/intelligence/summary"),
-      className: "px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-mono text-xs font-semibold flex items-center gap-2 shadow-lg shadow-amber-600/30 transition-all"
-    },
-    /* @__PURE__ */ React.createElement(Download, { className: "w-3.5 h-3.5" }),
-    /* @__PURE__ */ React.createElement("span", null, "Export Dossier")
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/network"),
-      className: "px-3.5 py-2 rounded-xl bg-[#241a12] hover:bg-[#2d2117] border border-amber-900/50 text-amber-300 font-mono text-xs font-medium flex items-center gap-2 transition-all"
-    },
-    /* @__PURE__ */ React.createElement(Share2, { className: "w-3.5 h-3.5 text-amber-400" }),
-    /* @__PURE__ */ React.createElement("span", null, "Inspect Graph")
-  ))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-1.5 overflow-x-auto border-t border-amber-900/30 mt-5 pt-3 font-mono text-xs" }, [
-    { key: "overview", label: "Overview", icon: /* @__PURE__ */ React.createElement(Briefcase, { className: "w-3.5 h-3.5" }) },
-    { key: "data", label: "Data Feeds (7)", icon: /* @__PURE__ */ React.createElement(Database, { className: "w-3.5 h-3.5" }) },
-    { key: "entities", label: "Entities (48)", icon: /* @__PURE__ */ React.createElement(Users, { className: "w-3.5 h-3.5" }) },
-    { key: "network", label: "Network Graph", icon: /* @__PURE__ */ React.createElement(Share2, { className: "w-3.5 h-3.5" }) },
-    { key: "geo", label: "Geo Surveillance", icon: /* @__PURE__ */ React.createElement(MapPin, { className: "w-3.5 h-3.5" }) },
-    { key: "timeline", label: "Event Timeline", icon: /* @__PURE__ */ React.createElement(Clock, { className: "w-3.5 h-3.5" }) },
-    { key: "leads", label: "Leads (12)", icon: /* @__PURE__ */ React.createElement(Flame, { className: "w-3.5 h-3.5 text-rose-400" }) },
-    { key: "settings", label: "Docket Settings", icon: /* @__PURE__ */ React.createElement(Sliders, { className: "w-3.5 h-3.5" }) }
-  ].map((tab) => /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      key: tab.key,
-      onClick: () => setActiveTab(tab.key),
-      className: `px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-semibold whitespace-nowrap transition-colors ${activeTab === tab.key ? "bg-amber-600/30 text-amber-300 border border-amber-500/50 shadow-xs" : "text-amber-200/60 hover:text-amber-100 hover:bg-[#241a12]"}`
-    },
-    tab.icon,
-    /* @__PURE__ */ React.createElement("span", null, tab.label)
-  )))), activeTab === "overview" && /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6" }, /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-2 space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#1c140d] border border-amber-900/30 rounded-xl p-5 space-y-3 shadow-md" }, /* @__PURE__ */ React.createElement("h2", { className: "text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2" }, /* @__PURE__ */ React.createElement("span", { className: "w-2 h-2 rounded-full bg-amber-400" }), "Executive Case Synopsis & Jurisdictional Bounds"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-amber-100/80 leading-relaxed font-sans" }, "Ongoing federal task force investigation targeting a transnational Hawala money laundering network operating in conjunction with clandestine maritime narcotics smuggling. Primary syndicates coordinate logistics via encrypted VoIP and disposable burner telephony rotated across 72-hour intervals."), /* @__PURE__ */ React.createElement("div", { className: "p-3.5 bg-[#120d08] rounded-lg border border-amber-900/40 font-mono text-xs space-y-1 text-amber-300/80" }, /* @__PURE__ */ React.createElement("div", null, "STATUTORY AUTHORITY: 18 U.S.C. \xA7 1956, 18 U.S.C. \xA7 1962 (RICO ACT)"), /* @__PURE__ */ React.createElement("div", null, "VENUE: United States District Court for the Southern District of New York"), /* @__PURE__ */ React.createElement("div", null, "EVIDENTIARY VAULT: 100% SHA-256 Anchored (FRE 902(14))"))), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-2 gap-4" }, /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      onClick: () => navigate("/network"),
-      className: "p-4 rounded-xl bg-[#1c140d] border border-amber-900/30 hover:border-amber-500/60 cursor-pointer transition-all shadow-md group"
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono text-amber-400 font-semibold mb-1 group-hover:text-amber-300" }, "SYNDICATE NETWORK"),
-    /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-white font-mono" }, caseData.relationshipsCount, " Links"),
-    /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-amber-200/60 mt-1" }, "14 core nodes isolated with Betweenness centrality > 0.70")
-  ), /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      onClick: () => navigate("/geo"),
-      className: "p-4 rounded-xl bg-[#1c140d] border border-amber-900/30 hover:border-amber-500/60 cursor-pointer transition-all shadow-md group"
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono text-rose-400 font-semibold mb-1 group-hover:text-rose-300" }, "GEO SURVEILLANCE"),
-    /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-bold text-white font-mono" }, "3 Hotspots"),
-    /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-amber-200/60 mt-1" }, "Pier 42, Safehouse 4, Industrial Logistics Terminal B")
-  ))), /* @__PURE__ */ React.createElement("div", { className: "space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#1c140d] border border-amber-900/30 rounded-xl p-4 font-mono text-xs space-y-3 shadow-md" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] uppercase tracking-wider text-amber-400 font-bold border-b border-amber-900/30 pb-2" }, "Chain of Custody Ledger"), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, /* @__PURE__ */ React.createElement("div", { className: "p-2.5 rounded-lg bg-[#120d08] border border-amber-900/40 text-[11px]" }, /* @__PURE__ */ React.createElement("div", { className: "text-amber-300 font-semibold" }, "FRE-902-14 Sealed Bundle"), /* @__PURE__ */ React.createElement("div", { className: "text-amber-400/60 text-[10px] mt-0.5" }, "SHA-256: 7f83b165...94c0"), /* @__PURE__ */ React.createElement("div", { className: "text-emerald-400 text-[9px] mt-0.5" }, "VERIFIED IN TACTICAL REPOSITORY")), /* @__PURE__ */ React.createElement("div", { className: "p-2.5 rounded-lg bg-[#120d08] border border-amber-900/40 text-[11px]" }, /* @__PURE__ */ React.createElement("div", { className: "text-amber-300 font-semibold" }, "Title III Wiretap Authorization"), /* @__PURE__ */ React.createElement("div", { className: "text-amber-400/60 text-[10px] mt-0.5" }, "DOCKET: WT-2026-0814"), /* @__PURE__ */ React.createElement("div", { className: "text-amber-400 text-[9px] mt-0.5" }, "ACTIVE TAP EXPIRES IN 14 DAYS")))))), activeTab === "data" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-5" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-4" }, /* @__PURE__ */ React.createElement("h2", { className: "text-sm font-bold text-white font-mono uppercase" }, "Connected Case Feeds & Telemetry"), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/data/sources"),
-      className: "px-3 py-1.5 rounded bg-steel-600 hover:bg-steel-500 text-white font-mono text-xs font-semibold"
-    },
-    "Add New Source Feed"
-  )), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 font-mono text-xs" }, ["CAD 911 Dispatch Feeds", "CDR Cellular Tower Dump (T-Mobile/AT&T)", "FinCEN SAR Transaction Ledger", "Port Authority ALPR Scans", "Latent Biometric Fingerprint Registry"].map((feed, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "p-3 rounded bg-navy-950 border border-navy-800 flex items-center justify-between" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-semibold" }, feed), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-slate-500" }, "INGESTED VIA CJIS SECURE CONNECTOR \u2022 100% PARSED")), /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded bg-threat-low/20 text-threat-low font-bold text-[10px]" }, "ACTIVE"))))), activeTab === "entities" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-5" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-4" }, /* @__PURE__ */ React.createElement("h2", { className: "text-sm font-bold text-white font-mono uppercase" }, "Linked Entities & Suspects (", caseData.entitiesCount, ")"), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/entities"),
-      className: "px-3 py-1.5 rounded bg-steel-600 hover:bg-steel-500 text-white font-mono text-xs font-semibold"
-    },
-    "Open Full Entities Registry"
-  )), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs" }, [
-    { name: "Viktor K. Sokolov", type: "POI (PRIMARY TARGET)", score: 94, threat: "CRITICAL" },
-    { name: 'Dmitri "The Anchor" Volkov', type: "POI (LOGISTICS)", score: 88, threat: "HIGH" },
-    { name: "+1 (555) 019-8821", type: "BURNER TELEPHONY", score: 92, threat: "CRITICAL" },
-    { name: "Black Audi A8 [NY: TRK-9902]", type: "TARGET VEHICLE", score: 85, threat: "HIGH" },
-    { name: "Safehouse 04 (Pier 42)", type: "SUSPECT LOCATION", score: 91, threat: "CRITICAL" },
-    { name: "Astraea Trading Corp (Cyprus)", type: "SHELL CORPORATION", score: 79, threat: "MEDIUM" }
-  ].map((ent, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "p-3 rounded bg-navy-950 border border-navy-800 space-y-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between text-[10px]" }, /* @__PURE__ */ React.createElement("span", { className: "text-steel-400 font-semibold" }, ent.type), /* @__PURE__ */ React.createElement("span", { className: "text-threat-critical font-bold" }, ent.threat)), /* @__PURE__ */ React.createElement("div", { className: "text-slate-100 font-bold text-sm truncate" }, ent.name), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-slate-500" }, "CONFIDENCE: ", ent.score, "% \u2022 LINKED"))))), activeTab === "network" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-6 text-center space-y-4" }, /* @__PURE__ */ React.createElement(Share2, { className: "w-12 h-12 text-steel-400 mx-auto" }), /* @__PURE__ */ React.createElement("h2", { className: "text-base font-bold text-white font-mono" }, "ForceAtlas2 Syndicate Link Graph Loaded"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-slate-400 max-w-md mx-auto" }, caseData.relationshipsCount, " validated relationship edges discovered across telephone intercepts, financial wire transactions, and shared safehouse premises."), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/network"),
-      className: "px-4 py-2 rounded bg-steel-600 hover:bg-steel-500 text-white font-mono text-xs font-semibold shadow-md inline-flex items-center gap-2"
-    },
-    /* @__PURE__ */ React.createElement(Share2, { className: "w-4 h-4" }),
-    /* @__PURE__ */ React.createElement("span", null, "Launch Interactive Network Graph")
-  )), activeTab === "geo" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-6 text-center space-y-4" }, /* @__PURE__ */ React.createElement(MapPin, { className: "w-12 h-12 text-threat-critical mx-auto" }), /* @__PURE__ */ React.createElement("h2", { className: "text-base font-bold text-white font-mono" }, "Geo-Temporal Surveillance & Cell Tower Triangulation"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-slate-400 max-w-md mx-auto" }, "Interactive GIS layers with cellular tower sector antennas, ALPR scans, and 24-hour timeline scrubber."), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/geo"),
-      className: "px-4 py-2 rounded bg-steel-600 hover:bg-steel-500 text-white font-mono text-xs font-semibold shadow-md inline-flex items-center gap-2"
-    },
-    /* @__PURE__ */ React.createElement(MapPin, { className: "w-4 h-4" }),
-    /* @__PURE__ */ React.createElement("span", null, "Open Surveillance Map")
-  )), activeTab === "timeline" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-6 text-center space-y-4" }, /* @__PURE__ */ React.createElement(Clock, { className: "w-12 h-12 text-steel-400 mx-auto" }), /* @__PURE__ */ React.createElement("h2", { className: "text-base font-bold text-white font-mono" }, "Multi-Track Chronological Event Stream"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-slate-400 max-w-md mx-auto" }, "Correlated multi-entity timeline of calls, financial transfers, meetings, and ALPR sightings with brush-zoom controls."), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/timeline"),
-      className: "px-4 py-2 rounded bg-steel-600 hover:bg-steel-500 text-white font-mono text-xs font-semibold shadow-md inline-flex items-center gap-2"
-    },
-    /* @__PURE__ */ React.createElement(Clock, { className: "w-4 h-4" }),
-    /* @__PURE__ */ React.createElement("span", null, "Open Event Timeline")
-  )), activeTab === "leads" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-6 text-center space-y-4" }, /* @__PURE__ */ React.createElement(Flame, { className: "w-12 h-12 text-threat-critical mx-auto" }), /* @__PURE__ */ React.createElement("h2", { className: "text-base font-bold text-white font-mono" }, "Explainable AI Lead Prioritization Matrix"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-slate-400 max-w-md mx-auto" }, caseData.activeLeadsCount, " active leads scored by machine models across source reliability, wiretap corroboration, and graph centrality signals."), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/leads"),
-      className: "px-4 py-2 rounded bg-threat-critical hover:bg-red-600 text-white font-mono text-xs font-semibold shadow-md inline-flex items-center gap-2"
-    },
-    /* @__PURE__ */ React.createElement(Flame, { className: "w-4 h-4" }),
-    /* @__PURE__ */ React.createElement("span", null, "Review Prioritized Leads")
-  )), activeTab === "settings" && /* @__PURE__ */ React.createElement("div", { className: "bg-navy-900 border border-navy-800 rounded-lg p-5 font-mono text-xs space-y-4" }, /* @__PURE__ */ React.createElement("h2", { className: "text-sm font-bold text-white uppercase tracking-wider" }, "Docket Governance & Security Controls"), /* @__PURE__ */ React.createElement("div", { className: "space-y-3" }, /* @__PURE__ */ React.createElement("div", { className: "p-3 bg-navy-950 rounded border border-navy-800 flex items-center justify-between" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-semibold" }, "Grand Jury Sealing Protection"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-slate-500" }, "FED. R. CRIM. P. 6(e) CRIMINAL CONTEMPT ENFORCEMENT")), /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold text-[10px]" }, "ENABLED")), /* @__PURE__ */ React.createElement("div", { className: "p-3 bg-navy-950 rounded border border-navy-800 flex items-center justify-between" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-slate-200 font-semibold" }, "Cryptographic Hardware Key Requirement"), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-slate-500" }, "FIPS-140-3 LEVEL 2 PIV CARD ENFORCEMENT")), /* @__PURE__ */ React.createElement("span", { className: "px-2 py-0.5 rounded bg-threat-low/20 text-threat-low font-bold text-[10px]" }, "ENFORCED")))));
+
+  const caseData =
+    ACTIVE_CASES_ROSTER.find((c) => c.id === id || c.caseId === id || c.caseNumber === id) ||
+    activeCase || {
+      id: "case-1",
+      caseNumber: "CASE #IT-2024-884",
+      title: "Hawala Network Syndicate Alpha",
+      priority: "HIGH",
+      status: "ACTIVE",
+      leadInvestigator: "M. Kessler",
+      badgeNumber: "FBI-89412",
+      classification: "RESTRICTED // LAW ENFORCEMENT SENSITIVE",
+      entitiesCount: 28,
+      relationshipsCount: 42,
+      activeLeadsCount: 14,
+    };
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto font-sans antialiased text-[#f3f4f6]">
+      {/* Top Banner Card */}
+      <div className="bg-[#14171c] border border-[#222731] rounded-xl p-6 shadow-xs relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div className="flex items-center gap-2 mb-2 font-mono text-[11px]">
+              <span className="px-2 py-0.5 rounded-md bg-[#101317] text-[#9cae9b] font-semibold border border-[#222731]">
+                {caseData.caseNumber}
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-[#282215] text-[#c4a265] font-semibold border border-[#3e3420]">
+                {caseData.priority} PRIORITY
+              </span>
+              <span className="px-2 py-0.5 rounded-md bg-[#18261c] text-[#8fa38d] font-semibold border border-[#25392b]">
+                {caseData.status}
+              </span>
+              {caseData.grandJuryProtected && (
+                <span className="px-2 py-0.5 rounded-md bg-[#181c22] border border-[#2a313d] text-[#c4a265] font-mono text-[10px] flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5" />
+                  SEALED DOCKET
+                </span>
+              )}
+            </div>
+
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              {caseData.title}
+            </h1>
+            <p className="text-xs text-[#9ca3af] mt-1 font-mono">
+              Lead Investigator: <strong className="text-white">{caseData.leadInvestigator}</strong> (Badge #{caseData.badgeNumber || "FBI-89412"}) • {caseData.classification}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0">
+            <button
+              onClick={() => navigate("/reports")}
+              className="h-8.5 px-3 rounded-md bg-[#101317] border border-[#222731] hover:bg-[#181c22] text-[#d1d5db] text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-[#9ca3af]" />
+              <span>Export Dossier</span>
+            </button>
+            <button
+              onClick={() => navigate("/network")}
+              className="h-8.5 px-3.5 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>Inspect Network</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-1 overflow-x-auto border-t border-[#222731] mt-5 pt-3 font-mono text-xs">
+          {[
+            { key: "overview", label: "Overview", icon: Briefcase },
+            { key: "entities", label: `Entities (${caseData.entitiesCount || 28})`, icon: Users },
+            { key: "network", label: "Network Graph", icon: Share2 },
+            { key: "timeline", label: "Timeline", icon: Clock },
+            { key: "leads", label: `Leads (${caseData.activeLeadsCount || 14})`, icon: Flame },
+            { key: "evidence", label: "Evidence", icon: FileCheck },
+            { key: "reports", label: "Reports", icon: FileText },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-3 py-1.5 rounded-md flex items-center gap-1.5 text-xs font-medium whitespace-nowrap transition-colors cursor-pointer ${
+                  isActive
+                    ? "bg-[#181c22] text-[#9cae9b] border border-[#28303e] font-semibold shadow-xs"
+                    : "text-[#9ca3af] hover:text-white hover:bg-[#101317]"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tab Contents */}
+      {activeTab === "overview" && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main 2-col Content */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 space-y-3 shadow-xs">
+              <h2 className="text-xs font-semibold text-white uppercase tracking-wider font-mono flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#9cae9b]" />
+                Executive Case Synopsis & Operational Scope
+              </h2>
+              <p className="text-xs text-[#d1d5db] leading-relaxed">
+                Ongoing federal intelligence investigation targeting a transnational Hawala money laundering syndicate operating in conjunction with clandestine maritime narcotics transshipments. Primary targets coordinate conveyance via encrypted VoIP bursts and disposable burner handsets rotated on 72-hour intervals.
+              </p>
+              <div className="p-3 bg-[#101317] rounded-md border border-[#222731] font-mono text-[11px] space-y-1 text-[#9ca3af]">
+                <div>STATUTORY AUTHORITY: 18 U.S.C. § 1956, 18 U.S.C. § 1962 (RICO ACT)</div>
+                <div>VENUE: U.S. District Court for Southern District of New York</div>
+                <div>EVIDENTIARY VAULT: 100% SHA-256 Anchored Ledger</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div
+                onClick={() => navigate("/network")}
+                className="p-4 rounded-lg bg-[#14171c] border border-[#222731] hover:border-[#2d3542] hover:bg-[#161a20] cursor-pointer transition-all shadow-xs group"
+              >
+                <div className="text-[11px] font-mono text-[#9cae9b] font-medium mb-1 group-hover:text-white">
+                  SYNDICATE NETWORK
+                </div>
+                <div className="text-2xl font-bold text-white font-mono">
+                  {caseData.relationshipsCount || 42} Links
+                </div>
+                <div className="text-[11px] text-[#9ca3af] mt-1">
+                  14 core nodes isolated with Betweenness centrality &gt; 0.70
+                </div>
+              </div>
+
+              <div
+                onClick={() => navigate("/geo")}
+                className="p-4 rounded-lg bg-[#14171c] border border-[#222731] hover:border-[#2d3542] hover:bg-[#161a20] cursor-pointer transition-all shadow-xs group"
+              >
+                <div className="text-[11px] font-mono text-[#dc7869] font-medium mb-1 group-hover:text-white">
+                  GEO SURVEILLANCE
+                </div>
+                <div className="text-2xl font-bold text-white font-mono">
+                  3 Hotspots
+                </div>
+                <div className="text-[11px] text-[#9ca3af] mt-1">
+                  Pier 42 Dock, Safehouse B-4, Freight Forwarding Yard
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="space-y-4">
+            <div className="bg-[#14171c] border border-[#222731] rounded-lg p-4 font-sans text-xs space-y-3 shadow-xs">
+              <div className="text-[11px] uppercase tracking-wider text-[#9ca3af] font-mono font-semibold border-b border-[#222731] pb-2">
+                Evidentiary Chain of Custody
+              </div>
+              <div className="space-y-2">
+                <div className="p-2.5 rounded-md bg-[#101317] border border-[#222731] text-[11px]">
+                  <div className="text-white font-medium">FRE-902-14 Sealed Telemetry</div>
+                  <div className="text-[#606875] font-mono text-[10px] mt-0.5">SHA-256: 7f83b165...94c0</div>
+                  <div className="text-[#8fa38d] font-mono text-[9px] mt-0.5">VERIFIED IN REPOSITORY</div>
+                </div>
+                <div className="p-2.5 rounded-md bg-[#101317] border border-[#222731] text-[11px]">
+                  <div className="text-white font-medium">Title III Intercept Warrant</div>
+                  <div className="text-[#606875] font-mono text-[10px] mt-0.5">DOCKET: WT-2024-0814</div>
+                  <div className="text-[#c4a265] font-mono text-[9px] mt-0.5">ACTIVE (EXPIRES IN 14 DAYS)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "entities" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+              Linked Entities ({caseData.entitiesCount || 28})
+            </h2>
+            <button
+              onClick={() => navigate("/entities")}
+              className="px-3 py-1.5 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-medium text-xs cursor-pointer"
+            >
+              Open Entities Registry →
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-mono text-xs">
+            {[
+              { name: "Raj Mehta", type: "POI (PRIMARY TARGET)", score: 94, threat: "CRITICAL" },
+              { name: "Vikramaditya Singhania", type: "POI (BENEFICIARY)", score: 88, threat: "HIGH" },
+              { name: "+91 98201 44921", type: "BURNER TELEPHONY", score: 92, threat: "CRITICAL" },
+              { name: "Black Audi A8 [MH-01-EA-9902]", type: "TARGET VEHICLE", score: 85, threat: "HIGH" },
+              { name: "Pier 42 Maritime Dock", type: "SUSPECT LOCATION", score: 91, threat: "CRITICAL" },
+              { name: "BlueStar Logistics Pvt. Ltd.", type: "SHELL CORPORATION", score: 79, threat: "MEDIUM" },
+            ].map((ent, i) => (
+              <div
+                key={i}
+                onClick={() => navigate(`/entities/poi-${i + 1}`)}
+                className="p-3 rounded-md bg-[#101317] border border-[#222731] hover:border-[#2d3542] hover:bg-[#161a20] space-y-1 cursor-pointer transition-colors"
+              >
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-[#9ca3af] font-medium">{ent.type}</span>
+                  <span
+                    className={`font-semibold ${
+                      ent.threat === "CRITICAL" ? "text-[#dc7869]" : "text-[#c4a265]"
+                    }`}
+                  >
+                    {ent.threat}
+                  </span>
+                </div>
+                <div className="text-white font-medium text-sm truncate font-sans">{ent.name}</div>
+                <div className="text-[10px] text-[#606875]">MATCH CONFIDENCE: {ent.score}%</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "network" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-8 text-center space-y-4">
+          <Share2 className="w-10 h-10 text-[#9cae9b] mx-auto" />
+          <h2 className="text-sm font-semibold text-white font-mono uppercase tracking-wider">
+            Syndicate Link Topology Loaded
+          </h2>
+          <p className="text-xs text-[#9ca3af] max-w-md mx-auto">
+            {caseData.relationshipsCount || 42} validated link edges discovered across telephone intercepts, financial wire transactions, and optical ALPR hits.
+          </p>
+          <button
+            onClick={() => navigate("/network")}
+            className="px-4 py-2 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Launch Interactive Network Graph</span>
+          </button>
+        </div>
+      )}
+
+      {activeTab === "timeline" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-8 text-center space-y-4">
+          <Clock className="w-10 h-10 text-[#9cae9b] mx-auto" />
+          <h2 className="text-sm font-semibold text-white font-mono uppercase tracking-wider">
+            Multi-Track Chronological Event Stream
+          </h2>
+          <p className="text-xs text-[#9ca3af] max-w-md mx-auto">
+            Correlated multi-entity timeline of calls, financial transfers, meetings, and ALPR sightings.
+          </p>
+          <button
+            onClick={() => navigate("/timeline")}
+            className="px-4 py-2 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Open Event Timeline</span>
+          </button>
+        </div>
+      )}
+
+      {activeTab === "leads" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-8 text-center space-y-4">
+          <Flame className="w-10 h-10 text-[#dc7869] mx-auto" />
+          <h2 className="text-sm font-semibold text-white font-mono uppercase tracking-wider">
+            Prioritized Investigative Leads ({caseData.activeLeadsCount || 14})
+          </h2>
+          <p className="text-xs text-[#9ca3af] max-w-md mx-auto">
+            Actionable signals prioritized by machine models across source reliability, wiretap corroboration, and graph centrality.
+          </p>
+          <button
+            onClick={() => navigate("/leads")}
+            className="px-4 py-2 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
+          >
+            <Flame className="w-3.5 h-3.5" />
+            <span>Review Investigative Leads</span>
+          </button>
+        </div>
+      )}
+
+      {activeTab === "evidence" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-8 text-center space-y-4">
+          <FileCheck className="w-10 h-10 text-[#9cae9b] mx-auto" />
+          <h2 className="text-sm font-semibold text-white font-mono uppercase tracking-wider">
+            Evidence Repository & Chain of Custody
+          </h2>
+          <p className="text-xs text-[#9ca3af] max-w-md mx-auto">
+            Cryptographically anchored exhibits, CDR extractions, bank wire receipts, and optical ALPR photos.
+          </p>
+          <button
+            onClick={() => navigate("/evidence")}
+            className="px-4 py-2 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
+          >
+            <FileCheck className="w-3.5 h-3.5" />
+            <span>Open Evidence Repository</span>
+          </button>
+        </div>
+      )}
+
+      {activeTab === "reports" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-8 text-center space-y-4">
+          <FileText className="w-10 h-10 text-[#9cae9b] mx-auto" />
+          <h2 className="text-sm font-semibold text-white font-mono uppercase tracking-wider">
+            Intelligence Dossiers & Export Briefings
+          </h2>
+          <p className="text-xs text-[#9ca3af] max-w-md mx-auto">
+            Generated court-ready briefs, executive summaries, and multi-agency intelligence summaries.
+          </p>
+          <button
+            onClick={() => navigate("/reports")}
+            className="px-4 py-2 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs inline-flex items-center gap-2 cursor-pointer"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Open Reports Center</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
 };
-var stdin_default = CaseCockpitPage;
-export {
-  CaseCockpitPage,
-  stdin_default as default
-};
+
+export { CaseCockpitPage };
+export default CaseCockpitPage;

@@ -1,273 +1,358 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/Button";
-import { Switch } from "@/components/ui/Switch";
-import { HashStamp } from "@/components/common/HashStamp";
+import { useNavigate } from "react-router-dom";
 import {
+  FileText,
+  Search,
+  Plus,
   Download,
   Eye,
-  EyeOff,
-  CheckCircle,
-  Archive,
-  Loader2,
-  FileText,
+  FileSpreadsheet,
+  ArrowLeft,
+  CheckCircle2
 } from "lucide-react";
-import { useGenerateReportMutation } from "@/store/api/apiSlice";
-import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
+import Button from "../../components/ui/Button";
+import Badge from "../../components/ui/Badge";
 
-const IntelligenceReportsPage = () => {
-  const { user } = useAuth();
-  const [includeSummary, setIncludeSummary] = useState(true);
-  const [includePOIs, setIncludePOIs] = useState(true);
-  const [includeWiretaps, setIncludeWiretaps] = useState(true);
-  const [includeMerkleCert, setIncludeMerkleCert] = useState(true);
-  const [redactInformant, setRedactInformant] = useState(true);
-  const [exportNotice, setExportNotice] = useState(null);
+const MOCK_REPORTS = [
+  {
+    id: "R-118",
+    title: "Harborview interim briefing",
+    caseId: "CS-2418",
+    caseName: "Harborview Logistics Network",
+    createdBy: "M. Kessler",
+    createdDate: "Nov 25, 2026",
+    createdShort: "Nov 25",
+    status: "Final",
+    classification: "Restricted",
+    overview: "Port-side freight forwarding using layered intermediaries; focus on invoicing anomalies and shared identifiers across Harborview and Pier 41.",
+    keyEntities: "A. Kovacs (person), J. Thorne (person), Meridian Holdings LLC, truck 7XQ-4419, Pier 41 Unit 9.",
+    relationshipSummary: "18 nodes · 42 edges · 3 clusters. Kovacs bridges two clusters via shared phone identifier.",
+    timeline: "Nov 12 lease ↔ Nov 18 call cluster ↔ Nov 21 invoice flag ↔ Nov 24 night access.",
+    geoFindings: "Recurring night windows at Pier 41 Bay C; co-presence of truck and registered fob.",
+    leads: "LD-8821 (94%), LD-8819 (88%) — both pending verification.",
+    evidenceRefs: "EV-5521, EV-5498, EV-5470, EV-5441 with custody intact.",
+    limitations: "AI-generated findings require investigator verification. Shared-line alternate explanation not excluded; call content unavailable."
+  },
+  {
+    id: "R-117",
+    title: "Northgate link chart",
+    caseId: "CS-2411",
+    caseName: "Northgate Industrial Locus",
+    createdBy: "D. Okafor",
+    createdDate: "Nov 22, 2026",
+    createdShort: "Nov 22",
+    status: "Draft",
+    classification: "Restricted",
+    overview: "Analysis of commercial storage units and registered corporate signatories in Northgate industrial zone.",
+    keyEntities: "J. Thorne, Northgate LLC, BlueStar Logistics.",
+    relationshipSummary: "12 nodes · 24 edges · 2 clusters.",
+    timeline: "Nov 12 lease signing -> Nov 15 unit activation.",
+    geoFindings: "Cluster of physical visits recorded during non-operational hours.",
+    leads: "LD-8802 (68%).",
+    evidenceRefs: "EV-5441 lease agreement.",
+    limitations: "Limited CCTV coverage on perimeter access gate."
+  },
+  {
+    id: "R-116",
+    title: "Meridian invoicing summary",
+    caseId: "CS-2407",
+    caseName: "Meridian Financial Ledger",
+    createdBy: "L. Tran",
+    createdDate: "Nov 19, 2026",
+    createdShort: "Nov 19",
+    status: "Under Review",
+    classification: "Confidential",
+    overview: "Forensic breakdown of structured billing transactions and duplicate invoice runs.",
+    keyEntities: "Meridian Holdings LLC, Shell Freight Acct #0092.",
+    relationshipSummary: "8 nodes · 16 financial flows.",
+    timeline: "Nov 10 to Nov 15 transaction window.",
+    geoFindings: "Bank branch teller transactions co-located with transit times.",
+    leads: "LD-8819 (88%).",
+    evidenceRefs: "EV-5498 invoice batch #4471.",
+    limitations: "Foreign jurisdiction wire records pending subpoena response."
+  },
+  {
+    id: "R-115",
+    title: "Pier 41 movement log",
+    caseId: "CS-2399",
+    caseName: "Maritime Berth Surveillance",
+    createdBy: "R. Alvarez",
+    createdDate: "Nov 14, 2026",
+    createdShort: "Nov 14",
+    status: "Final",
+    classification: "Restricted",
+    overview: "Automated optical license plate scans and barrier fob entries across 30-day surveillance.",
+    keyEntities: "Truck 7XQ-4419, Pier 41 Bay C.",
+    relationshipSummary: "6 nodes · 14 access records.",
+    timeline: "Bi-weekly convergence schedule.",
+    geoFindings: "High-density hotspot at Unit 9 loading ramp.",
+    leads: "LD-8809 (76%).",
+    evidenceRefs: "EV-5521 gate logs.",
+    limitations: "Optical plate camera degradation during heavy fog on Nov 10."
+  }
+];
 
-  const [generateReportMutation, { isLoading: isGenerating }] = useGenerateReportMutation();
+export const IntelligenceReportsPage = () => {
+  const navigate = useNavigate();
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleExport = async (format) => {
-    try {
-      if (format === "PDF") {
-        toast.loading("Compiling court-admissible PDF dossier...", { id: "pdf-gen" });
-        const res = await generateReportMutation({
-          caseId: "CASE-2026-NIGHTSHADE",
-          authorName: user?.name || "Special Agent Marcus Vance",
-        }).unwrap();
+  const filteredReports = MOCK_REPORTS.filter(
+    (r) =>
+      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.caseId.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-        toast.success(`Dossier compiled: ${res.data?.metadata?.classification}`, { id: "pdf-gen" });
-        setExportNotice(`DOSSIER COMPILED: Exported PDF package with cryptographic Bates stamping (Merkle Hash: ${res.data?.evidenceChain?.merkleRoot?.substring(0, 12)}...).`);
-
-        // Trigger native download from Express PDF generator
-        window.open("/api/reports/pdf/CASE-2026-NIGHTSHADE", "_blank");
-      } else {
-        setExportNotice(`DOSSIER COMPILED: Exported ${format} archive package with cryptographic Bates stamping.`);
-        toast.success("Evidentiary ZIP vault exported.");
-      }
-      setTimeout(() => setExportNotice(null), 6000);
-    } catch (err) {
-      toast.error(err?.data?.message || "Failed to compile intelligence report.");
-    }
+  const handleExportPDF = (report) => {
+    toast.success(`Exporting signed PDF dossier for ${report.id}...`);
   };
 
-  return (
-    <div className="space-y-6 max-w-7xl mx-auto font-mono">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-tactical-neutral-200 dark:border-tactical-neutral-800">
-        <div>
-          <div className="flex items-center gap-2 text-tactical-neutral-500 text-[11px] uppercase tracking-wider mb-0.5">
-            <span>COURT-ADMISSIBLE INTELLIGENCE DOSSIER COMPILER</span>
-            <span>/</span>
-            <span className="text-tactical-primary-600 font-semibold">FORM-BRIEF-2026</span>
+  const handleExportExcel = (report) => {
+    toast.success(`Exporting telemetry workbook for ${report.id}...`);
+  };
+
+  // If viewing single report preview: Replicate ReportPreview.jpeg
+  if (selectedReport) {
+    return (
+      <div className="space-y-4 max-w-7xl mx-auto">
+        {/* Top Header */}
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSelectedReport(null)}
+              className="text-xs text-[#8d98a5] hover:text-white flex items-center gap-1 transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Reports</span>
+            </button>
+            <span className="text-xs text-[#6c7682]">/</span>
+            <span className="text-xs text-[#8d98a5]">Preview</span>
+            <span className="text-xs text-[#6c7682]">·</span>
+            <span className="text-xs font-mono text-white">{selectedReport.caseId}</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-tactical-neutral-900 dark:text-tactical-neutral-100">
-            Intelligence Report Builder & Redaction Console
+          <h1 className="text-xl font-medium text-white tracking-tight pt-1">
+            {selectedReport.id} · {selectedReport.title}
           </h1>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            disabled={isGenerating}
-            onClick={() => handleExport("PDF")}
-            icon={isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-          >
-            {isGenerating ? "Compiling..." : "Export Signed PDF"}
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => handleExport("ZIP_VAULT")}
-            icon={<Archive className="w-4 h-4" />}
-          >
-            Export Evidentiary ZIP
-          </Button>
+
+        {/* 2-Column Layout matching ReportPreview.jpeg */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* Left Document Paper (8.5 Cols) */}
+          <div className="lg:col-span-8 bg-white rounded-lg p-8 sm:p-12 text-[#101317] font-sans shadow-xl space-y-6 select-text">
+            {/* Document Header */}
+            <div className="flex items-center justify-between border-b border-neutral-200 pb-4 text-xs font-mono">
+              <div className="flex items-center gap-2 font-bold tracking-wider text-black uppercase">
+                <span className="w-2 h-2 rounded-full bg-black inline-block" />
+                <span>INTELLITRACK</span>
+              </div>
+              <div className="text-neutral-500">
+                {selectedReport.id} · {selectedReport.createdDate}
+              </div>
+            </div>
+
+            {/* Document Title */}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-black">
+                Investigation Report — {selectedReport.caseName}
+              </h2>
+              <p className="text-xs text-neutral-600 mt-1 font-mono">
+                {selectedReport.caseId} · Prepared by {selectedReport.createdBy} · Classification: {selectedReport.classification}
+              </p>
+            </div>
+
+            {/* Content Sections */}
+            <div className="space-y-4 text-xs leading-relaxed text-neutral-800">
+              <p>
+                <strong className="text-black font-semibold">1. Case overview. </strong>
+                {selectedReport.overview}
+              </p>
+
+              <p>
+                <strong className="text-black font-semibold">2. Key entities. </strong>
+                {selectedReport.keyEntities}
+              </p>
+
+              <p>
+                <strong className="text-black font-semibold">3. Relationship summary. </strong>
+                {selectedReport.relationshipSummary}
+              </p>
+
+              <p>
+                <strong className="text-black font-semibold">4. Timeline. </strong>
+                {selectedReport.timeline}
+              </p>
+
+              <p>
+                <strong className="text-black font-semibold">5. Geo-temporal findings. </strong>
+                {selectedReport.geoFindings}
+              </p>
+
+              <p>
+                <strong className="text-black font-semibold">6. Investigative leads. </strong>
+                {selectedReport.leads}
+              </p>
+
+              <p>
+                <strong className="text-black font-semibold">7. Evidence references. </strong>
+                {selectedReport.evidenceRefs}
+              </p>
+
+              {/* Highlighted Limitations Box */}
+              <div className="p-3.5 border border-neutral-300 rounded bg-neutral-50 text-neutral-700">
+                <strong className="text-black font-semibold">8. Confidence & limitations. </strong>
+                {selectedReport.limitations}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Action Sidebar (3.5 Cols) */}
+          <div className="lg:col-span-4 bg-[#14171c] border border-[#222731] rounded-lg p-5 space-y-4 shadow-sm">
+            <div className="text-xs font-medium text-white">Export</div>
+
+            <div className="space-y-2.5">
+              <Button
+                variant="primary"
+                className="w-full justify-center text-xs"
+                onClick={() => handleExportPDF(selectedReport)}
+                icon={<Download className="w-3.5 h-3.5" />}
+              >
+                Export PDF
+              </Button>
+
+              <Button
+                variant="secondary"
+                className="w-full justify-center text-xs"
+                onClick={() => handleExportExcel(selectedReport)}
+                icon={<FileSpreadsheet className="w-3.5 h-3.5" />}
+              >
+                Export Excel
+              </Button>
+            </div>
+
+            <p className="text-[11px] text-[#6c7682] leading-relaxed pt-2 border-t border-[#222731]">
+              Includes confidence levels, sources and audit hash on every page.
+            </p>
+          </div>
         </div>
       </div>
+    );
+  }
 
-      {exportNotice && (
-        <div className="p-3 bg-tactical-success-50 dark:bg-tactical-success-950/80 border border-tactical-success-300 dark:border-tactical-success-800 rounded flex items-center justify-between text-xs text-tactical-success-800 dark:text-tactical-success-200">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-tactical-success-600" />
-            <span>{exportNotice}</span>
-          </div>
-          <span className="text-[10px] uppercase font-bold text-tactical-success-600">FIPS 140-3 STAMPED</span>
+  // Reports Table matching Reports.jpeg
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-medium text-white tracking-tight">Intelligence Reports</h1>
+          <p className="text-xs text-[#8d98a5] mt-0.5">
+            Generated briefings with confidence and limitations
+          </p>
         </div>
-      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 space-y-4">
-          <div className="p-4 bg-white dark:bg-tactical-neutral-900 rounded border border-tactical-neutral-200 dark:border-tactical-neutral-800 space-y-4">
-            <h3 className="text-xs font-bold uppercase text-tactical-neutral-900 dark:text-tactical-neutral-100 pb-2 border-b border-tactical-neutral-200 dark:border-tactical-neutral-800">
-              Dossier Sections & Inclusions
-            </h3>
-            <div className="space-y-3 text-xs">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-tactical-neutral-800 dark:text-tactical-neutral-200">
-                    Executive Synopsis
-                  </div>
-                  <div className="text-[10px] text-tactical-neutral-500">Statutory authority & probable cause</div>
-                </div>
-                <Switch checked={includeSummary} onChange={setIncludeSummary} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-tactical-neutral-800 dark:text-tactical-neutral-200">
-                    Target POI Biometrics
-                  </div>
-                  <div className="text-[10px] text-tactical-neutral-500">Known aliases & fingerprints</div>
-                </div>
-                <Switch checked={includePOIs} onChange={setIncludePOIs} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-tactical-neutral-800 dark:text-tactical-neutral-200">
-                    Title III Wiretap Transcripts
-                  </div>
-                  <div className="text-[10px] text-tactical-neutral-500">Intercept audio logs & IMEI matches</div>
-                </div>
-                <Switch checked={includeWiretaps} onChange={setIncludeWiretaps} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-tactical-neutral-800 dark:text-tactical-neutral-200">
-                    Merkle Audit Chain Certificate
-                  </div>
-                  <div className="text-[10px] text-tactical-neutral-500">FRE 902(13) cryptographic proof</div>
-                </div>
-                <Switch checked={includeMerkleCert} onChange={setIncludeMerkleCert} />
-              </div>
-            </div>
+        <Button
+          variant="primary"
+          onClick={() => setSelectedReport(MOCK_REPORTS[0])}
+          icon={<Plus className="w-3.5 h-3.5" />}
+        >
+          Generate report
+        </Button>
+      </div>
 
-            <div className="pt-3 border-t border-tactical-neutral-200 dark:border-tactical-neutral-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="font-bold text-tactical-danger-600 text-xs block">Informant Identity Protection</span>
-                  <span className="text-[10px] text-tactical-neutral-500">Redact sensitive CHS / CI markers</span>
-                </div>
-                <Button
-                  variant={redactInformant ? "danger" : "secondary"}
-                  size="sm"
-                  onClick={() => setRedactInformant(!redactInformant)}
-                  icon={redactInformant ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                  className="text-[10px] py-1"
+      {/* Search Input */}
+      <div className="relative max-w-sm">
+        <Search className="w-3.5 h-3.5 text-[#6c7682] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search reports..."
+          className="w-full bg-[#14171c] border border-[#222731] text-xs text-white placeholder-[#6c7682] rounded pl-8 pr-3 py-1.5 focus:outline-none focus:border-[#9cae9b] transition-colors"
+        />
+      </div>
+
+      {/* Table matching Reports.jpeg */}
+      <div className="bg-[#14171c] border border-[#222731] rounded-lg overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-[#222731] text-[#6c7682] font-medium bg-[#101317]">
+                <th className="py-2.5 px-4 font-normal">Report</th>
+                <th className="py-2.5 px-4 font-normal">Title</th>
+                <th className="py-2.5 px-4 font-normal">Case</th>
+                <th className="py-2.5 px-4 font-normal">Created by</th>
+                <th className="py-2.5 px-4 font-normal">Created</th>
+                <th className="py-2.5 px-4 font-normal">Status</th>
+                <th className="py-2.5 px-4 font-normal">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#222731]">
+              {filteredReports.map((item) => (
+                <tr
+                  key={item.id}
+                  className="hover:bg-[#181d24] transition-colors"
                 >
-                  {redactInformant ? "Redacted" : "Unmasked"}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:col-span-8">
-          <div className="p-8 bg-white dark:bg-tactical-neutral-900 rounded border border-tactical-neutral-300 dark:border-tactical-neutral-700 shadow-md space-y-6 text-xs text-tactical-neutral-900 dark:text-tactical-neutral-100">
-            <div className="text-center pb-4 border-b-2 border-tactical-neutral-900 dark:border-tactical-neutral-100 space-y-1">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-tactical-danger-600">
-                UNITED STATES DEPARTMENT OF JUSTICE // LAW ENFORCEMENT SENSITIVE
-              </div>
-              <h2 className="text-base font-bold uppercase">INVESTIGATIVE MEMORANDUM & EVIDENTIARY DOSSIER</h2>
-              <div className="text-[10px] text-tactical-neutral-500">
-                DOCKET: CASE-2026-NIGHTSHADE // OPERATION NIGHTSHADE // BATES: US-DOJ-0001
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 pb-4 border-b border-tactical-neutral-200 dark:border-tactical-neutral-800 text-[11px]">
-              <div>
-                <div>
-                  <strong>TO:</strong> United States Magistrate Court, SDNY
-                </div>
-                <div>
-                  <strong>FROM:</strong> {user?.name || "Special Agent Marcus Vance"} ({user?.badgeNumber || "FBI-89412"})
-                </div>
-                <div>
-                  <strong>JURISDICTION:</strong> Southern & Eastern Districts of NY
-                </div>
-              </div>
-              <div>
-                <div>
-                  <strong>DATE:</strong> March 29, 2026 19:00 ZULU
-                </div>
-                <div>
-                  <strong>CLASSIFICATION:</strong> 18 U.S.C. § 1962 (RICO)
-                </div>
-                <div>
-                  <strong>CHAIN PROOF:</strong> Block #4102 Anchored
-                </div>
-              </div>
-            </div>
-
-            {includeSummary && (
-              <div className="space-y-2">
-                <h4 className="font-bold uppercase text-xs border-b border-tactical-neutral-200 dark:border-tactical-neutral-800 pb-0.5">
-                  I. Executive Synopsis & Probable Cause
-                </h4>
-                <p className="text-tactical-neutral-700 dark:text-tactical-neutral-300 leading-relaxed font-sans text-xs">
-                  This memorandum details probable cause established across a multi-month joint task force wiretap and financial surveillance operation. Evidence collected establishes that the target criminal syndicate has executed unauthorized contraband logistics and structured hawala remittances exceeding $14.8M across Atlantic shipping corridors.
-                </p>
-              </div>
-            )}
-
-            {includePOIs && (
-              <div className="space-y-2">
-                <h4 className="font-bold uppercase text-xs border-b border-tactical-neutral-200 dark:border-tactical-neutral-800 pb-0.5">
-                  II. Primary Target of Investigation
-                </h4>
-                <div className="p-3 rounded bg-tactical-neutral-50 dark:bg-tactical-neutral-800 border border-tactical-neutral-200 dark:border-tactical-neutral-700 text-[11px] space-y-1">
-                  <div>
-                    NAME: <strong>Raj Mehta</strong> (Primary Alias: "The Courier" / RM)
-                  </div>
-                  <div>
-                    FBI IDENTIFICATION #: <strong>POI-4409-NY</strong>
-                  </div>
-                  <div>
-                    CITIZENSHIP: <strong>Dual Citizen / International Commercial Operator</strong>
-                  </div>
-                  <div>
-                    THREAT STATUS: <strong className="text-tactical-danger-600">CRITICAL // ACTIVE WARRANT</strong>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {includeWiretaps && (
-              <div className="space-y-2">
-                <h4 className="font-bold uppercase text-xs border-b border-tactical-neutral-200 dark:border-tactical-neutral-800 pb-0.5">
-                  III. Intercept Audio Log & Informant Telemetry
-                </h4>
-                <div className="p-3 bg-tactical-neutral-100 dark:bg-tactical-neutral-800/80 rounded font-mono text-[11px] space-y-2 border border-tactical-neutral-300 dark:border-tactical-neutral-700">
-                  <div className="text-[10px] text-tactical-neutral-500">
-                    INTERCEPT #TT3-0042-881 (2026-03-29 14:10:00 ZULU) // TOWER NYC-889
-                  </div>
-                  <div>
-                    <span className="font-bold text-tactical-neutral-800 dark:text-tactical-neutral-200">
-                      TARGET MEHTA:
-                    </span>{" "}
-                    "The consignment cleared customs at Pier 42. Meet{" "}
-                    {redactInformant ? (
-                      <span className="px-1 py-0.2 bg-tactical-neutral-900 text-white rounded text-[10px] font-bold">
-                        [REDACTED // CONFIDENTIAL INFORMANT #9402]
-                      </span>
-                    ) : (
-                      <span className="text-tactical-danger-600 font-bold">Informant Alexei Morozov</span>
-                    )}{" "}
-                    behind the terminal at 21:00."
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {includeMerkleCert && (
-              <div className="space-y-2 pt-2 border-t border-tactical-neutral-200 dark:border-tactical-neutral-800">
-                <h4 className="font-bold uppercase text-xs">
-                  IV. Federal Rules of Evidence 902(13) Self-Authenticating Hash
-                </h4>
-                <div className="flex items-center justify-between p-2.5 rounded bg-tactical-neutral-50 dark:bg-tactical-neutral-800/50 border border-tactical-neutral-200 dark:border-tactical-neutral-700 text-[10px]">
-                  <span>MERKLE ROOT HASH:</span>
-                  <HashStamp hash="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" lead={12} tail={12} />
-                </div>
-              </div>
-            )}
-          </div>
+                  <td className="py-3 px-4 font-mono text-[#8d98a5]">
+                    {item.id}
+                  </td>
+                  <td
+                    onClick={() => setSelectedReport(item)}
+                    className="py-3 px-4 font-medium text-white hover:text-[#9cae9b] cursor-pointer transition-colors"
+                  >
+                    {item.title}
+                  </td>
+                  <td className="py-3 px-4 font-mono text-[#8d98a5]">
+                    {item.caseId}
+                  </td>
+                  <td className="py-3 px-4 text-[#8d98a5]">
+                    {item.createdBy}
+                  </td>
+                  <td className="py-3 px-4 text-[#6c7682] font-mono">
+                    {item.createdShort}
+                  </td>
+                  <td className="py-3 px-4">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                        item.status === "Final"
+                          ? "bg-[#18261c] text-[#8fa38d]"
+                          : item.status === "Draft"
+                          ? "bg-[#252016] text-[#c4a265]"
+                          : "bg-[#252016] text-[#c4a265]"
+                      }`}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setSelectedReport(item)}
+                        className="px-2 py-1 rounded bg-[#101317] border border-[#222731] hover:border-[#384152] text-[#d1d7df] hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <Eye className="w-3 h-3 text-[#6c7682]" />
+                        <span>View</span>
+                      </button>
+                      <button
+                        onClick={() => handleExportPDF(item)}
+                        className="px-2 py-1 rounded bg-[#101317] border border-[#222731] hover:border-[#384152] text-[#8d98a5] hover:text-white transition-colors cursor-pointer"
+                      >
+                        PDF
+                      </button>
+                      <button
+                        onClick={() => handleExportExcel(item)}
+                        className="px-2 py-1 rounded bg-[#101317] border border-[#222731] hover:border-[#384152] text-[#8d98a5] hover:text-white transition-colors cursor-pointer"
+                      >
+                        Excel
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -275,4 +360,3 @@ const IntelligenceReportsPage = () => {
 };
 
 export default IntelligenceReportsPage;
-export { IntelligenceReportsPage };

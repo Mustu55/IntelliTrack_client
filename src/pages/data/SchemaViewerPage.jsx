@@ -3,9 +3,14 @@ import {
   FileSpreadsheet,
   Code2,
   Check,
-  Share2
+  Share2,
+  Layers,
+  Database
 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import toast from "react-hot-toast";
+
 const SCHEMA_ENTITIES = [
   {
     id: "ent-person",
@@ -75,39 +80,149 @@ const SCHEMA_ENTITIES = [
     relationships: ["TRANSFERRED_FUNDS_TO", "BENEFICIARY_OWNER"]
   }
 ];
-const SchemaViewerPage = () => {
+
+export const SchemaViewerPage = () => {
   const [selectedEntity, setSelectedEntity] = useState(SCHEMA_ENTITIES[0]);
-  return /* @__PURE__ */ React.createElement("div", { className: "space-y-6 max-w-7xl mx-auto font-sans pb-16" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-6 shadow-xl shadow-emerald-950/40 relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "absolute top-0 right-0 w-96 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" }), /* @__PURE__ */ React.createElement("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 font-mono text-[11px] uppercase tracking-wider mb-2" }, /* @__PURE__ */ React.createElement(FileSpreadsheet, { className: "w-3.5 h-3.5" }), /* @__PURE__ */ React.createElement("span", null, "STANDARDIZED INVESTIGATIVE ONTOLOGY \u2022 V3.4")), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl sm:text-3xl font-bold text-white tracking-tight" }, "Normalized Investigation Data Schema"), /* @__PURE__ */ React.createElement("p", { className: "text-xs sm:text-sm text-emerald-200/70 mt-1 max-w-2xl leading-relaxed" }, "Core entity ontology, attribute typing, cryptographic indexes, and graph edge specifications.")), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => toast.success("Schema specification exported under Fed Standards JSON-LD"),
-      className: "px-4 py-2.5 rounded-lg bg-[#081411] hover:bg-[#132e26] border border-[#15382e] hover:border-emerald-500/40 text-emerald-300 font-mono text-xs font-semibold flex items-center gap-2 transition-all shadow-md self-start sm:self-auto"
-    },
-    /* @__PURE__ */ React.createElement(Code2, { className: "w-4 h-4 text-emerald-400" }),
-    /* @__PURE__ */ React.createElement("span", null, "Export Schema JSON")
-  ))), /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6 font-mono text-xs" }, /* @__PURE__ */ React.createElement("div", { className: "space-y-2.5" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] uppercase text-emerald-300/80 font-bold mb-2 flex items-center justify-between" }, /* @__PURE__ */ React.createElement("span", null, "Investigation Entities (", SCHEMA_ENTITIES.length, ")"), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] text-emerald-200/40" }, "Select to inspect")), SCHEMA_ENTITIES.map((ent) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: ent.id,
-      onClick: () => setSelectedEntity(ent),
-      className: `p-3.5 rounded-xl border cursor-pointer transition-all ${selectedEntity.id === ent.id ? "bg-[#132e26] border-emerald-500 shadow-lg shadow-emerald-950/50 ring-1 ring-emerald-500/50" : "bg-[#0e221c] border-[#15382e] hover:border-emerald-500/30 text-emerald-200/70"}`
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-emerald-400 font-bold uppercase tracking-wider" }, ent.category),
-    /* @__PURE__ */ React.createElement("div", { className: "text-sm font-bold text-white font-sans mt-0.5" }, ent.name),
-    /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-emerald-200/60 mt-1 line-clamp-1" }, ent.description)
-  ))), /* @__PURE__ */ React.createElement("div", { className: "lg:col-span-2 space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#0e221c] border border-[#15382e] rounded-xl p-6 space-y-5 shadow-xl shadow-emerald-950/20" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between border-b border-[#15382e] pb-4" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("span", { className: "text-[10px] text-emerald-400 font-bold uppercase tracking-wider" }, selectedEntity.category, " SCHEMA DEFINITION"), /* @__PURE__ */ React.createElement("h2", { className: "text-xl font-bold text-white font-sans mt-0.5" }, selectedEntity.name)), /* @__PURE__ */ React.createElement("span", { className: "px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold uppercase tracking-wider" }, "\u25CF ACTIVE IN GRAPH")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-xs uppercase text-emerald-300 font-bold mb-2.5 flex items-center justify-between" }, /* @__PURE__ */ React.createElement("span", null, "Normalized Entity Attributes"), /* @__PURE__ */ React.createElement("span", { className: "text-emerald-200/50 font-normal" }, selectedEntity.attributes.length, " Fields Defined")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#081411] rounded-xl border border-[#15382e] overflow-hidden" }, /* @__PURE__ */ React.createElement("table", { className: "w-full text-left text-xs" }, /* @__PURE__ */ React.createElement("thead", { className: "bg-[#06100d] text-emerald-300/70 border-b border-[#15382e] text-[10px] uppercase" }, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "py-2.5 px-3.5" }, "Field Name"), /* @__PURE__ */ React.createElement("th", { className: "py-2.5 px-3.5" }, "Type"), /* @__PURE__ */ React.createElement("th", { className: "py-2.5 px-3.5" }, "Indexed Indexing Strategy"))), /* @__PURE__ */ React.createElement("tbody", { className: "divide-y divide-[#15382e] text-slate-200" }, selectedEntity.attributes.map((attr, idx) => /* @__PURE__ */ React.createElement("tr", { key: idx, className: "hover:bg-[#132e26]/40 transition-colors" }, /* @__PURE__ */ React.createElement("td", { className: "py-2.5 px-3.5 font-bold text-emerald-300" }, attr.name), /* @__PURE__ */ React.createElement("td", { className: "py-2.5 px-3.5 text-slate-300" }, attr.type), /* @__PURE__ */ React.createElement("td", { className: "py-2.5 px-3.5" }, attr.isIndex ? /* @__PURE__ */ React.createElement("span", { className: "inline-flex items-center gap-1 text-emerald-400 font-bold text-[10px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30" }, /* @__PURE__ */ React.createElement(Check, { className: "w-3 h-3" }), /* @__PURE__ */ React.createElement("span", null, "YES (B-TREE SEARCH)")) : /* @__PURE__ */ React.createElement("span", { className: "text-slate-500 text-[10px]" }, "UNINDEXED BLOB")))))))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-xs uppercase text-emerald-300 font-bold mb-2.5 flex items-center gap-1.5" }, /* @__PURE__ */ React.createElement(Share2, { className: "w-3.5 h-3.5 text-teal-400" }), /* @__PURE__ */ React.createElement("span", null, "Allowed Outgoing Graph Edges")), /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-2" }, selectedEntity.relationships.map((rel, idx) => /* @__PURE__ */ React.createElement(
-    "span",
-    {
-      key: idx,
-      className: "px-3 py-1.5 rounded-lg bg-[#081411] border border-[#15382e] hover:border-emerald-500/40 text-emerald-300 text-[11px] font-semibold transition-colors"
-    },
-    "--[",
-    rel,
-    "]-->"
-  ))))))));
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto font-sans pb-16">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#222731]">
+        <div>
+          <div className="flex items-center gap-2 text-tactical-neutral-500 text-[11px] uppercase tracking-wider font-mono mb-1">
+            <span>ONTOLOGY & GRAPH MODEL</span>
+            <span>/</span>
+            <span className="text-tactical-sage-400 font-semibold">SCHEMA VIEWER</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            Normalized Investigation Data Schema
+          </h1>
+          <p className="text-xs sm:text-sm text-tactical-neutral-400 mt-1 max-w-2xl leading-relaxed">
+            Core entity ontology, attribute typing, cryptographic indexes, and graph edge constraints
+          </p>
+        </div>
+
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => toast.success("Schema specification exported under JSON-LD")}
+          icon={<Code2 className="w-4 h-4" />}
+          className="text-xs font-mono border-[#222731]"
+        >
+          Export Schema JSON
+        </Button>
+      </div>
+
+      {/* 2-Column Inspector */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-mono text-xs">
+        {/* Left Entity List */}
+        <div className="space-y-2.5">
+          <div className="text-[11px] uppercase text-tactical-neutral-400 font-bold mb-2 flex items-center justify-between">
+            <span>Investigation Entities ({SCHEMA_ENTITIES.length})</span>
+            <span className="text-[10px] text-tactical-neutral-500">Select to inspect</span>
+          </div>
+
+          {SCHEMA_ENTITIES.map((ent) => (
+            <div
+              key={ent.id}
+              onClick={() => setSelectedEntity(ent)}
+              className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                selectedEntity.id === ent.id
+                  ? "bg-[#1c222b] border-tactical-sage-400/60 shadow-sm"
+                  : "bg-[#14171c] border-[#222731] hover:border-[#2e3644] text-tactical-neutral-400"
+              }`}
+            >
+              <div className="text-[10px] text-tactical-sage-400 font-bold uppercase tracking-wider">
+                {ent.category}
+              </div>
+              <div className="text-sm font-bold text-white font-sans mt-0.5">
+                {ent.name}
+              </div>
+              <div className="text-[11px] text-tactical-neutral-400 mt-1 line-clamp-1 font-sans">
+                {ent.description}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Right Entity Schema Detail */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-[#14171c] border border-[#222731] rounded-xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#222731] pb-4">
+              <div>
+                <span className="text-[10px] text-tactical-sage-400 font-bold uppercase tracking-wider">
+                  {selectedEntity.category} SCHEMA DEFINITION
+                </span>
+                <h2 className="text-xl font-bold text-white font-sans mt-0.5">
+                  {selectedEntity.name}
+                </h2>
+              </div>
+              <Badge variant="success" size="sm" className="font-mono text-[9px] uppercase">
+                ● ACTIVE IN GRAPH
+              </Badge>
+            </div>
+
+            <div>
+              <div className="text-xs uppercase text-tactical-neutral-300 font-bold mb-2.5 flex items-center justify-between">
+                <span>Normalized Entity Attributes</span>
+                <span className="text-tactical-neutral-500 font-normal">{selectedEntity.attributes.length} Fields Defined</span>
+              </div>
+
+              <div className="bg-[#101317] rounded-xl border border-[#222731] overflow-hidden">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-[#0d0f11] text-tactical-neutral-500 border-b border-[#222731] text-[10px] uppercase">
+                    <tr>
+                      <th className="py-2.5 px-3.5">Field Name</th>
+                      <th className="py-2.5 px-3.5">Type</th>
+                      <th className="py-2.5 px-3.5">Indexing Strategy</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#222731] text-tactical-neutral-300">
+                    {selectedEntity.attributes.map((attr, idx) => (
+                      <tr key={idx} className="hover:bg-[#14171c]/60 transition-colors">
+                        <td className="py-2.5 px-3.5 font-bold text-tactical-sage-400 font-mono">
+                          .{attr.name}
+                        </td>
+                        <td className="py-2.5 px-3.5 text-tactical-neutral-400">{attr.type}</td>
+                        <td className="py-2.5 px-3.5">
+                          {attr.isIndex ? (
+                            <span className="inline-flex items-center gap-1 text-tactical-success-400 font-bold text-[10px]">
+                              <Check className="w-3 h-3" />
+                              <span>YES (B-TREE SEARCH)</span>
+                            </span>
+                          ) : (
+                            <span className="text-tactical-neutral-600 text-[10px]">UNINDEXED BLOB</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-xs uppercase text-tactical-neutral-300 font-bold mb-2.5 flex items-center gap-1.5">
+                <Share2 className="w-3.5 h-3.5 text-tactical-sage-400" />
+                <span>Allowed Outgoing Graph Edges</span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {selectedEntity.relationships.map((rel, idx) => (
+                  <span
+                    key={idx}
+                    className="px-3 py-1.5 rounded-lg bg-[#101317] border border-[#222731] hover:border-[#2e3644] text-tactical-sage-400 text-[11px] font-semibold transition-colors"
+                  >
+                    --[{rel}]--&gt;
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
-var stdin_default = SchemaViewerPage;
-export {
-  SchemaViewerPage,
-  stdin_default as default
-};
+
+export default SchemaViewerPage;

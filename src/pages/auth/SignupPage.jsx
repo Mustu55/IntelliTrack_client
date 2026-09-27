@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { Shield, Key, CheckCircle, FileText, Lock, Loader2 } from "lucide-react";
+import { Shield, Key, CheckCircle, FileText, Lock, Loader2, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 const SignupPage = () => {
@@ -24,7 +24,7 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Cryptographic passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
@@ -42,79 +42,79 @@ const SignupPage = () => {
       setSubmitted(true);
       setTimeout(() => {
         navigate("/dashboard");
-      }, 1500);
+      }, 1200);
     } catch (err) {
-      // Error toast handled inside AuthContext
+      // Error toast handled in AuthContext
     }
   };
 
   return (
-    <div className="min-h-screen bg-navy-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-mono select-none">
-      <div className="w-full max-w-xl mx-auto mb-4 flex items-center justify-between text-[10px] font-mono text-slate-400 bg-navy-900/80 px-3 py-1.5 rounded border border-navy-800">
-        <span className="flex items-center gap-1.5 text-steel-400 font-bold">
-          <span className="w-2 h-2 rounded-full bg-steel-400 animate-pulse" />
-          SEC-LEVEL: CJIS-4 RECEPTOR
-        </span>
-        <span className="text-slate-400">RESTRICTED TO SWORN LAW ENFORCEMENT</span>
-      </div>
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <Link to="/" className="inline-flex items-center gap-2 mb-4">
-          <div className="w-10 h-10 rounded bg-navy-800 flex items-center justify-center text-white shadow-sm border border-steel-600">
-            <Shield className="w-6 h-6 fill-steel-600/30 stroke-steel-400" />
+    <div className="min-h-screen bg-[#0d0f11] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans select-none antialiased">
+      <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center mb-6">
+        <Link to="/" className="inline-flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-md bg-[#181c22] flex items-center justify-center text-[#9cae9b] border border-[#2a313d] shadow-xs">
+            <Shield className="w-4 h-4" />
           </div>
-          <span className="font-bold text-lg tracking-wider text-slate-100">INTELLITRACK</span>
+          <span className="font-bold text-sm tracking-wider uppercase text-white font-sans">
+            INTELLITRACK
+          </span>
         </Link>
-        <h2 className="text-xl font-bold uppercase tracking-tight text-white">FORM-SEC-89 Personnel Intake</h2>
-        <p className="mt-1 text-xs text-slate-400">Official Law Enforcement Credentialing & Key Enrollment</p>
+        <h2 className="text-xl font-semibold text-white tracking-tight">
+          Personnel Credential Registration
+        </h2>
+        <p className="mt-1 text-xs text-[#9ca3af]">
+          Law enforcement officer intake and intelligence clearance enrollment
+        </p>
       </div>
 
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-xl">
-        <div className="bg-navy-900 py-8 px-6 sm:px-10 border border-navy-800 rounded shadow-xl">
+      <div className="sm:mx-auto sm:w-full sm:max-w-xl">
+        <div className="bg-[#14171c] py-8 px-6 sm:px-8 border border-[#222731] rounded-xl shadow-2xl">
           {submitted ? (
             <div className="text-center py-8 space-y-4">
-              <div className="w-14 h-14 rounded-full bg-threat-low/20 border border-threat-low/40 flex items-center justify-center text-threat-low mx-auto">
-                <CheckCircle className="w-8 h-8" />
+              <div className="w-12 h-12 rounded-full bg-[#18261c] border border-[#25392b] flex items-center justify-center text-[#8fa38d] mx-auto">
+                <CheckCircle className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base uppercase text-white">APPLICATION SECURED & TRANSMITTED</h3>
-              <p className="text-xs text-slate-300 max-w-md mx-auto">
-                Dossier registered to immutable ledger. Initializing authenticated session...
+              <h3 className="font-semibold text-sm uppercase font-mono text-white">
+                Credentials Enrolled & Verified
+              </h3>
+              <p className="text-xs text-[#9ca3af] max-w-sm mx-auto">
+                Identity verified on audit ledger. Launching operational intelligence workspace...
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
-                  label="Full Name (Legal/Service)"
+                  label="Full Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Special Agent Jane Doe"
+                  placeholder="Special Agent Marcus Vance"
                   required
                 />
                 <Input
                   label="Official Badge / Shield #"
                   value={badgeNumber}
                   onChange={(e) => setBadgeNumber(e.target.value)}
-                  placeholder="e.g. ATF-44910"
+                  placeholder="e.g. FBI-89412"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Select
-                  label="Parent Agency / Department"
+                  label="Jurisdictional Agency"
                   value={agency}
                   onChange={(e) => setAgency(e.target.value)}
                   options={[
-                    { value: "FEDERAL_BUREAU_OF_INVESTIGATION", label: "Federal Bureau of Investigation (FBI)" },
-                    { value: "DRUG_ENFORCEMENT_ADMINISTRATION", label: "Drug Enforcement Administration (DEA)" },
-                    { value: "HOMELAND_SECURITY_INVESTIGATIONS", label: "Homeland Security Investigations (HSI)" },
-                    { value: "BUREAU_ALCOHOL_TOBACCO_FIREARMS", label: "Bureau of Alcohol, Tobacco & Firearms (ATF)" },
+                    { value: "FEDERAL_BUREAU_OF_INVESTIGATION", label: "Federal Bureau of Investigation" },
+                    { value: "DRUG_ENFORCEMENT_ADMINISTRATION", label: "Drug Enforcement Administration" },
+                    { value: "HOMELAND_SECURITY_INVESTIGATIONS", label: "Homeland Security Investigations" },
+                    { value: "BUREAU_ALCOHOL_TOBACCO_FIREARMS", label: "Bureau of Alcohol, Tobacco & Firearms" },
                     { value: "STATE_POLICE_INTELLIGENCE_FUSION", label: "State Police Fusion Center" },
                   ]}
                 />
                 <Select
-                  label="Assigned Operational Role"
+                  label="Operational Role"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   options={[
@@ -128,63 +128,64 @@ const SignupPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
-                  label="Official Email Address"
+                  label="Agency Email Address"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="agent.name@agency.gov"
+                  placeholder="m.vance@intellitrack.gov"
                   required
                 />
                 <Input
-                  label="FIPS 201 PIV Token Serial"
+                  label="PIV / CAC Token Serial"
                   value={pivSerial}
                   onChange={(e) => setPivSerial(e.target.value)}
-                  placeholder="PIV-XXXX-XXXX-FED"
+                  placeholder="PIV-9904-8172-FED"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
-                  label="Cryptographic Password"
+                  label="Password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 8 chars (upper, lower, num, sym)"
+                  placeholder="Min. 8 characters"
                   required
                 />
                 <Input
-                  label="Confirm Passkey"
+                  label="Confirm Password"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter passkey"
+                  placeholder="Re-enter password"
                   required
                 />
               </div>
 
-              <div className="p-3 bg-navy-950 rounded border border-navy-800 text-xs text-slate-300">
-                <FileText className="w-4 h-4 text-steel-400 inline mr-1" />
-                By submitting this sworn record, you attest under penalty of perjury (28 U.S.C. § 1746) that all submitted identities are verified and backed by active jurisdictional commission.
+              <div className="p-3 bg-[#101317] rounded-md border border-[#222731] text-[11px] text-[#9ca3af] leading-relaxed">
+                <FileText className="w-3.5 h-3.5 text-[#8fa38d] inline mr-1.5" />
+                By submitting this form, you verify authorization under CJIS Level 4 compliance protocols. All access is logged and audited.
               </div>
 
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isRegistering}
-                className="w-full bg-steel-600 hover:bg-steel-500 text-white font-mono uppercase tracking-wide text-xs py-2.5"
-                size="lg"
-                icon={isRegistering ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
-              >
-                {isRegistering ? "Registering Clearance..." : "Enroll Cryptographic Credentials"}
-              </Button>
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={isRegistering}
+                  className="w-full h-10 bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold text-xs py-2.5 rounded-md"
+                  icon={isRegistering ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
+                >
+                  {isRegistering ? "Registering Clearance..." : "Enroll Officer Credentials"}
+                </Button>
+              </div>
             </form>
           )}
 
-          <div className="mt-6 text-center text-xs text-slate-400">
+          <div className="mt-6 text-center text-xs text-[#606875]">
             <span>Already have active clearance? </span>
-            <Link to="/login" className="font-bold text-steel-400 hover:text-steel-300 hover:underline">
-              Terminal Login
+            <Link to="/login" className="font-semibold text-[#9cae9b] hover:underline">
+              Terminal Login →
             </Link>
           </div>
         </div>

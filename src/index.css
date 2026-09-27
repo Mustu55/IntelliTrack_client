@@ -4,20 +4,22 @@
 
 @layer base {
   :root {
-    --color-surface-base: #07111F;
-    --color-surface-sunken: #0D1B2A;
-    --color-surface-pure: #101F33;
-    --color-border-subtle: #263B55;
-    --color-border-strong: #334d6e;
-    --color-primary: #2563EB;
-    --color-primary-container: #1d4ed8;
+    --color-canvas-base: #0d0f11;
+    --color-canvas-subtle: #101317;
+    --color-canvas-elevated: #14171c;
+    --color-canvas-card: #16191f;
+    --color-border-hairline: #222731;
+    --color-border-strong: #2d3542;
+    --color-accent-primary: #9cae9b;
+    --color-text-ink: #f3f4f6;
+    --color-text-muted: #9ca3af;
   }
 
   body {
     margin: 0;
     padding: 0;
-    background-color: #07111F;
-    color: #F8FAFC;
+    background-color: #0d0f11;
+    color: #f3f4f6;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -29,10 +31,10 @@
   }
 }
 
-/* Custom scrollbars for data tables and terminals */
+/* Custom crisp scrollbars for analytical tables and panels */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -40,10 +42,29 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 3px;
+  background: #232832;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.6);
+  background: #333a47;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #222731;
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #2e3543;
+}
+

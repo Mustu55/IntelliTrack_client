@@ -9,15 +9,20 @@ import {
   Share2,
   FileText,
   AlertTriangle,
-  ChevronRight
+  ChevronRight,
+  Shield,
+  Activity,
+  CheckCircle2
 } from "lucide-react";
+
 const ENTITY_ROSTER = {
   "poi-1": {
     id: "poi-1",
     name: "Raj Mehta",
-    entityType: "Person",
-    confidence: 92,
-    status: "Person of Interest",
+    entityType: "PERSON OF INTEREST",
+    confidence: 94,
+    status: "Active Surveillance",
+    threatTier: "CRITICAL",
     identityInfo: {
       knownAliases: ['"The Courier"', "R.K. Mehta", "Rajiv M.", "RM-Logistics"],
       phoneNumbers: [
@@ -39,14 +44,14 @@ const ENTITY_ROSTER = {
       ]
     },
     relationships: [
-      { targetName: "Vikramaditya Singhania", targetType: "Person", relationshipType: "Co-Conspirator // Direct Financial Recipient", confidence: 94, status: "SUSPICIOUS" },
-      { targetName: "Maya Patel", targetType: "Person", relationshipType: "Escrow Account Signatory", confidence: 88, status: "REVIEW_REQUIRED" },
-      { targetName: "Kabir Khan", targetType: "Person", relationshipType: "Fleet & Convoy Coordinator", confidence: 91, status: "VERIFIED" },
-      { targetName: "BlueStar Logistics Pvt. Ltd.", targetType: "Organization", relationshipType: "Corporate Proxy & Shell Front", confidence: 95, status: "SUSPICIOUS" },
-      { targetName: "Astraea Trading Corp", targetType: "Organization", relationshipType: "Trade Invoice Intermediary", confidence: 86, status: "REVIEW_REQUIRED" },
-      { targetName: "Wire Transfer $142,000 (#WT-9921)", targetType: "Transaction", relationshipType: "Authorized Remittance Payout", confidence: 96, status: "SUSPICIOUS" },
-      { targetName: "Pier 42 Maritime Dock", targetType: "Location", relationshipType: "Repeated Rendezvous Point (7x)", confidence: 98, status: "VERIFIED" },
-      { targetName: "CASE #IT-2024-884", targetType: "Case", relationshipType: "Primary Syndicate Subject (Docket Exhibit A)", confidence: 99, status: "VERIFIED" }
+      { targetName: "Vikramaditya Singhania", targetType: "Person", relationshipType: "Co-Conspirator // Direct Financial Recipient", confidence: 94, status: "CRITICAL" },
+      { targetName: "Maya Patel", targetType: "Person", relationshipType: "Escrow Account Signatory", confidence: 88, status: "HIGH" },
+      { targetName: "Kabir Khan", targetType: "Person", relationshipType: "Fleet & Convoy Coordinator", confidence: 91, status: "ACTIVE" },
+      { targetName: "BlueStar Logistics Pvt. Ltd.", targetType: "Organization", relationshipType: "Corporate Proxy & Shell Front", confidence: 95, status: "CRITICAL" },
+      { targetName: "Astraea Trading Corp", targetType: "Organization", relationshipType: "Trade Invoice Intermediary", confidence: 86, status: "HIGH" },
+      { targetName: "Wire Transfer $142,000 (#WT-9921)", targetType: "Transaction", relationshipType: "Authorized Remittance Payout", confidence: 96, status: "CRITICAL" },
+      { targetName: "Pier 42 Maritime Dock", targetType: "Location", relationshipType: "Repeated Rendezvous Point (7x)", confidence: 98, status: "ACTIVE" },
+      { targetName: "CASE #IT-2024-884", targetType: "Case", relationshipType: "Primary Syndicate Subject (Exhibit A)", confidence: 99, status: "ACTIVE" }
     ],
     evidence: [
       {
@@ -55,16 +60,16 @@ const ENTITY_ROSTER = {
         date: "2024-03-12 14:22 UTC",
         relationshipType: "Telephony Voice Burst to Hawala Terminal",
         confidence: 96,
-        badgeStatus: "GREEN",
+        badgeStatus: "HIGH",
         notes: "VoLTE packet stream confirmed originating from registered IMEI #86129480112948."
       },
       {
         id: "ev-2",
         sourceRecord: "Crime Branch FIR No. 2024/098",
         date: "2024-02-18 10:00 UTC",
-        relationshipType: "Named Accused under IPC 420/120B",
+        relationshipType: "Named Accused under Section 420/120B",
         confidence: 99,
-        badgeStatus: "GREEN",
+        badgeStatus: "HIGH",
         notes: 'Deposition statement from co-accused names "Raj Mehta / The Courier".'
       },
       {
@@ -73,7 +78,7 @@ const ENTITY_ROSTER = {
         date: "2024-03-12 14:32 UTC",
         relationshipType: "Vehicle Scanned at Gate Checkpoint",
         confidence: 94,
-        badgeStatus: "GREEN",
+        badgeStatus: "HIGH",
         notes: "Black Audi A8 [MH-01-EA-9902] optical OCR match 98.2%."
       },
       {
@@ -82,21 +87,13 @@ const ENTITY_ROSTER = {
         date: "2024-03-11 16:45 UTC",
         relationshipType: "Hawala Shell Remittance Transit",
         confidence: 88,
-        badgeStatus: "AMBER",
+        badgeStatus: "REVIEW",
         notes: "Transaction ledger requires forensic auditor counter-signature."
-      },
-      {
-        id: "ev-5",
-        sourceRecord: "OSINT Telegram Group Handle Leak",
-        date: "2024-03-01 08:30 UTC",
-        relationshipType: "Encrypted Group Chat Administrator",
-        confidence: 72,
-        badgeStatus: "RED",
-        notes: "Low-confidence heuristic match; shared burner recovery email alias."
       }
     ]
   }
 };
+
 const EntityProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -104,168 +101,342 @@ const EntityProfilePage = () => {
   const entity = ENTITY_ROSTER[entityId] || ENTITY_ROSTER["poi-1"];
   const [activeTab, setActiveTab] = useState("identity");
   const [evidenceFilter, setEvidenceFilter] = useState("ALL");
+
   const filteredEvidence = entity.evidence.filter(
-    (ev) => evidenceFilter === "ALL" || ev.badgeStatus === evidenceFilter
+    (ev) => evidenceFilter === "ALL" || (evidenceFilter === "HIGH" ? ev.badgeStatus === "HIGH" : ev.badgeStatus !== "HIGH")
   );
-  return /* @__PURE__ */ React.createElement("div", { className: "space-y-6 max-w-7xl mx-auto font-sans pb-16" }, /* @__PURE__ */ React.createElement("div", { className: "p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 shadow-md" }, /* @__PURE__ */ React.createElement(AlertTriangle, { className: "w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" }), /* @__PURE__ */ React.createElement("div", { className: "text-xs" }, /* @__PURE__ */ React.createElement("span", { className: "font-bold text-amber-200 uppercase tracking-wide" }, "Sworn Human Verification Safeguard:", " "), /* @__PURE__ */ React.createElement("span", { className: "text-amber-300/90 leading-relaxed" }, "AI-generated links are evidence-based leads requiring investigator verification. IntelliTrack provides probabilistic link intelligence to assist analytical commanders; it does not constitute judicial determination of guilt."))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#0D1B2A] border border-[#263B55] rounded-2xl p-6 shadow-xl relative overflow-hidden" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-start gap-4" }, /* @__PURE__ */ React.createElement("div", { className: "w-16 h-16 rounded-xl bg-[#101F33] border-2 border-[#2563EB] flex items-center justify-center text-[#06B6D4] shrink-0 shadow-lg" }, /* @__PURE__ */ React.createElement(Users, { className: "w-8 h-8" })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap items-center gap-2 mb-1.5 font-mono text-xs" }, /* @__PURE__ */ React.createElement("span", { className: "px-2.5 py-0.5 rounded font-bold bg-blue-500/20 text-[#06B6D4] border border-blue-500/30 uppercase" }, "ENTITY PROFILE"), /* @__PURE__ */ React.createElement("span", { className: "px-2.5 py-0.5 rounded font-semibold bg-[#101F33] text-slate-300 border border-[#263B55]" }, "Type: ", entity.entityType), /* @__PURE__ */ React.createElement("span", { className: "px-2.5 py-0.5 rounded font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30" }, entity.status)), /* @__PURE__ */ React.createElement("h1", { className: "text-2xl sm:text-3xl font-extrabold text-white tracking-tight" }, entity.name), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 text-xs font-mono text-[#94A3B8] mt-1" }, /* @__PURE__ */ React.createElement("span", null, "Confidence:"), /* @__PURE__ */ React.createElement("span", { className: "text-[#10B981] font-bold text-sm" }, entity.confidence, "% MATCH"), /* @__PURE__ */ React.createElement("span", null, "\u2022"), /* @__PURE__ */ React.createElement("span", null, "ID: ", entity.id.toUpperCase()), /* @__PURE__ */ React.createElement("span", null, "\u2022"), /* @__PURE__ */ React.createElement("span", null, "Active Docket: CASE #IT-2024-884")))), /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap items-center gap-2.5 font-mono text-xs" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/network"),
-      className: "px-4 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-600 text-white font-bold flex items-center gap-2 shadow-md transition-colors cursor-pointer"
-    },
-    /* @__PURE__ */ React.createElement(Share2, { className: "w-4 h-4" }),
-    /* @__PURE__ */ React.createElement("span", null, "Explore in Network Graph")
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/geo"),
-      className: "px-3.5 py-2.5 rounded-lg bg-[#101F33] hover:bg-[#12243A] border border-[#263B55] text-slate-200 transition-colors flex items-center gap-2 cursor-pointer"
-    },
-    /* @__PURE__ */ React.createElement(MapPin, { className: "w-4 h-4 text-emerald-400" }),
-    /* @__PURE__ */ React.createElement("span", null, "Surveillance Map")
-  ))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 border-t border-[#263B55] mt-6 pt-4 font-mono text-xs" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setActiveTab("identity"),
-      className: `px-4 py-2 rounded-lg transition-colors font-semibold flex items-center gap-2 cursor-pointer ${activeTab === "identity" ? "bg-[#101F33] text-white border border-[#2563EB]" : "text-[#94A3B8] hover:text-white hover:bg-[#101F33]"}`
-    },
-    /* @__PURE__ */ React.createElement(Users, { className: "w-3.5 h-3.5 text-cyan-400" }),
-    /* @__PURE__ */ React.createElement("span", null, "Identity Information")
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setActiveTab("relationships"),
-      className: `px-4 py-2 rounded-lg transition-colors font-semibold flex items-center gap-2 cursor-pointer ${activeTab === "relationships" ? "bg-[#101F33] text-white border border-[#2563EB]" : "text-[#94A3B8] hover:text-white hover:bg-[#101F33]"}`
-    },
-    /* @__PURE__ */ React.createElement(Share2, { className: "w-3.5 h-3.5 text-blue-400" }),
-    /* @__PURE__ */ React.createElement("span", null, "Relationships (", entity.relationships.length, ")")
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setActiveTab("evidence"),
-      className: `px-4 py-2 rounded-lg transition-colors font-semibold flex items-center gap-2 cursor-pointer ${activeTab === "evidence" ? "bg-[#101F33] text-white border border-[#2563EB]" : "text-[#94A3B8] hover:text-white hover:bg-[#101F33]"}`
-    },
-    /* @__PURE__ */ React.createElement(FileText, { className: "w-3.5 h-3.5 text-emerald-400" }),
-    /* @__PURE__ */ React.createElement("span", null, "Evidence Records (", entity.evidence.length, ")")
-  ))), activeTab === "identity" && /* @__PURE__ */ React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-5" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-3" }, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Users, { className: "w-4 h-4 text-cyan-400" }), /* @__PURE__ */ React.createElement("span", null, "Known Names / Aliases")), /* @__PURE__ */ React.createElement("div", { className: "flex flex-wrap gap-2 pt-1 font-mono text-xs" }, entity.identityInfo.knownAliases.map((alias, idx) => /* @__PURE__ */ React.createElement(
-    "span",
-    {
-      key: idx,
-      className: "px-3 py-1.5 rounded-lg bg-[#07111F] border border-[#263B55] text-slate-200 font-semibold"
-    },
-    alias
-  ))), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-[#94A3B8] font-mono pt-2 border-t border-[#263B55]/50" }, "Resolved through telecom CDR subscribers, witness statements, and corporate filings.")), /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-3" }, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Phone, { className: "w-4 h-4 text-[#06B6D4]" }), /* @__PURE__ */ React.createElement("span", null, "Phone Numbers & Handsets")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 font-mono text-xs" }, entity.identityInfo.phoneNumbers.map((ph, idx) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: idx,
-      className: "p-3 rounded-lg bg-[#07111F] border border-[#263B55] flex items-center justify-between"
-    },
-    /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, ph.number), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#94A3B8] mt-0.5" }, "IMEI: ", ph.imei, " \u2022 ", ph.type)),
-    /* @__PURE__ */ React.createElement(
-      "span",
-      {
-        className: `text-[10px] px-2 py-0.5 rounded font-bold ${ph.status === "Active" ? "bg-emerald-500/20 text-[#10B981] border border-emerald-500/30" : "bg-slate-800 text-slate-400"}`
-      },
-      ph.status
-    )
-  )))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-3" }, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2" }, /* @__PURE__ */ React.createElement(MapPin, { className: "w-4 h-4 text-amber-400" }), /* @__PURE__ */ React.createElement("span", null, "Locations & Associated Sites")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 font-mono text-xs" }, entity.identityInfo.locations.map((loc, idx) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: idx,
-      className: "p-3 rounded-lg bg-[#07111F] border border-[#263B55] space-y-1"
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "text-white font-semibold flex items-center justify-between" }, /* @__PURE__ */ React.createElement("span", null, loc.address), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] text-[#06B6D4]" }, loc.role)),
-    /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#94A3B8]" }, "Last Sighting: ", loc.lastSeen)
-  )))), /* @__PURE__ */ React.createElement("div", { className: "space-y-5" }, /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-3" }, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Car, { className: "w-4 h-4 text-emerald-400" }), /* @__PURE__ */ React.createElement("span", null, "Vehicles")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 font-mono text-xs" }, entity.identityInfo.vehicles.map((v, idx) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: idx,
-      className: "p-3 rounded-lg bg-[#07111F] border border-[#263B55] flex items-center justify-between"
-    },
-    /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, v.plate), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#94A3B8]" }, v.model)),
-    /* @__PURE__ */ React.createElement("span", { className: "text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-[#06B6D4] border border-blue-500/30" }, v.tag)
-  )))), /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-3" }, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider flex items-center gap-2" }, /* @__PURE__ */ React.createElement(Building, { className: "w-4 h-4 text-purple-400" }), /* @__PURE__ */ React.createElement("span", null, "Organizations & Corporate Fronts")), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 font-mono text-xs" }, entity.identityInfo.organizations.map((org, idx) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: idx,
-      className: "p-3 rounded-lg bg-[#07111F] border border-[#263B55] flex items-center justify-between"
-    },
-    /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-white font-bold" }, org.name), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] text-[#94A3B8]" }, org.role)),
-    /* @__PURE__ */ React.createElement("span", { className: "text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-[#F59E0B] border border-amber-500/30" }, org.status)
-  )))))), activeTab === "relationships" && /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#263B55] pb-3" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider" }, "Graph Relationships (", entity.relationships.length, " Active Links)"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-[#94A3B8]" }, "People, organizations, transactions, locations, and cases connected to ", entity.name)), /* @__PURE__ */ React.createElement("span", { className: "text-xs font-mono text-[#06B6D4]" }, "Multi-Hop Link Centrality: 0.89")), /* @__PURE__ */ React.createElement("div", { className: "overflow-x-auto" }, /* @__PURE__ */ React.createElement("table", { className: "w-full text-left text-xs font-mono" }, /* @__PURE__ */ React.createElement("thead", { className: "bg-[#07111F] text-[#94A3B8] border-b border-[#263B55]" }, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", { className: "p-3" }, "Connected Entity"), /* @__PURE__ */ React.createElement("th", { className: "p-3" }, "Entity Type"), /* @__PURE__ */ React.createElement("th", { className: "p-3" }, "Relationship Type"), /* @__PURE__ */ React.createElement("th", { className: "p-3" }, "Confidence"), /* @__PURE__ */ React.createElement("th", { className: "p-3" }, "Investigation Status"), /* @__PURE__ */ React.createElement("th", { className: "p-3 text-right" }, "Actions"))), /* @__PURE__ */ React.createElement("tbody", { className: "divide-y divide-[#263B55] bg-[#0D1B2A]" }, entity.relationships.map((rel, idx) => /* @__PURE__ */ React.createElement("tr", { key: idx, className: "hover:bg-[#12243A] transition-colors" }, /* @__PURE__ */ React.createElement("td", { className: "p-3 text-white font-bold" }, rel.targetName), /* @__PURE__ */ React.createElement("td", { className: "p-3" }, /* @__PURE__ */ React.createElement("span", { className: "text-[10px] px-2 py-0.5 rounded bg-[#07111F] text-[#94A3B8] border border-[#263B55]" }, rel.targetType)), /* @__PURE__ */ React.createElement("td", { className: "p-3 text-[#06B6D4] font-semibold" }, rel.relationshipType), /* @__PURE__ */ React.createElement("td", { className: "p-3 text-white font-bold" }, rel.confidence, "%"), /* @__PURE__ */ React.createElement("td", { className: "p-3" }, /* @__PURE__ */ React.createElement(
-    "span",
-    {
-      className: `text-[10px] px-2 py-0.5 rounded font-bold ${rel.status === "VERIFIED" ? "bg-emerald-500/20 text-[#10B981] border border-emerald-500/30" : rel.status === "SUSPICIOUS" ? "bg-red-500/20 text-[#EF4444] border border-red-500/30" : "bg-amber-500/20 text-[#F59E0B] border border-amber-500/30"}`
-    },
-    rel.status
-  )), /* @__PURE__ */ React.createElement("td", { className: "p-3 text-right" }, /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/network"),
-      className: "text-[11px] text-[#2563EB] hover:text-[#06B6D4] font-semibold inline-flex items-center gap-1 cursor-pointer"
-    },
-    /* @__PURE__ */ React.createElement("span", null, "Focus"),
-    /* @__PURE__ */ React.createElement(ChevronRight, { className: "w-3 h-3" })
-  )))))))), activeTab === "evidence" && /* @__PURE__ */ React.createElement("div", { className: "bg-[#101F33] border border-[#263B55] rounded-xl p-5 shadow-lg space-y-4" }, /* @__PURE__ */ React.createElement("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#263B55] pb-3" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h3", { className: "text-sm font-bold text-white font-mono uppercase tracking-wider" }, "Evidentiary Source Records & Proofs"), /* @__PURE__ */ React.createElement("p", { className: "text-xs text-[#94A3B8]" }, "Underlying forensic records anchoring identity linkages")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 font-mono text-xs" }, /* @__PURE__ */ React.createElement("span", { className: "text-[#94A3B8] text-[10px]" }, "CONFIDENCE FILTER:"), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setEvidenceFilter("ALL"),
-      className: `px-2.5 py-1 rounded cursor-pointer ${evidenceFilter === "ALL" ? "bg-[#2563EB] text-white" : "bg-[#07111F] text-slate-400 hover:text-white"}`
-    },
-    "All"
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setEvidenceFilter("GREEN"),
-      className: `px-2.5 py-1 rounded cursor-pointer flex items-center gap-1 ${evidenceFilter === "GREEN" ? "bg-emerald-500/20 text-[#10B981] border border-emerald-500/30 font-bold" : "bg-[#07111F] text-slate-400"}`
-    },
-    /* @__PURE__ */ React.createElement("span", { className: "w-2 h-2 rounded-full bg-[#10B981]" }),
-    "High"
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setEvidenceFilter("AMBER"),
-      className: `px-2.5 py-1 rounded cursor-pointer flex items-center gap-1 ${evidenceFilter === "AMBER" ? "bg-amber-500/20 text-[#F59E0B] border border-amber-500/30 font-bold" : "bg-[#07111F] text-slate-400"}`
-    },
-    /* @__PURE__ */ React.createElement("span", { className: "w-2 h-2 rounded-full bg-[#F59E0B]" }),
-    "Review"
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => setEvidenceFilter("RED"),
-      className: `px-2.5 py-1 rounded cursor-pointer flex items-center gap-1 ${evidenceFilter === "RED" ? "bg-red-500/20 text-[#EF4444] border border-red-500/30 font-bold" : "bg-[#07111F] text-slate-400"}`
-    },
-    /* @__PURE__ */ React.createElement("span", { className: "w-2 h-2 rounded-full bg-[#EF4444]" }),
-    "Low/Risk"
-  ))), /* @__PURE__ */ React.createElement("div", { className: "space-y-3 font-mono text-xs" }, filteredEvidence.map((ev) => /* @__PURE__ */ React.createElement(
-    "div",
-    {
-      key: ev.id,
-      className: "p-4 rounded-xl bg-[#0D1B2A] border border-[#263B55] hover:border-[#2563EB] transition-all space-y-2"
-    },
-    /* @__PURE__ */ React.createElement("div", { className: "flex flex-col sm:flex-row sm:items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement(FileText, { className: "w-4 h-4 text-cyan-400 shrink-0" }), /* @__PURE__ */ React.createElement("span", { className: "text-white font-bold text-sm" }, ev.sourceRecord)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ React.createElement("span", { className: "text-[#94A3B8]" }, ev.date), /* @__PURE__ */ React.createElement(
-      "span",
-      {
-        className: `px-2.5 py-0.5 rounded text-[10px] font-extrabold border ${ev.badgeStatus === "GREEN" ? "bg-emerald-500/20 text-[#10B981] border-emerald-500/40" : ev.badgeStatus === "AMBER" ? "bg-amber-500/20 text-[#F59E0B] border-amber-500/40" : "bg-red-500/20 text-[#EF4444] border-red-500/40"}`
-      },
-      ev.confidence,
-      "% CONFIDENCE (",
-      ev.badgeStatus === "GREEN" ? "HIGH" : ev.badgeStatus === "AMBER" ? "REQUIRES REVIEW" : "LOW / RISK",
-      ")"
-    ))),
-    /* @__PURE__ */ React.createElement("div", { className: "text-slate-200" }, /* @__PURE__ */ React.createElement("span", { className: "text-[#94A3B8]" }, "Relationship Type: "), /* @__PURE__ */ React.createElement("span", { className: "text-[#06B6D4] font-semibold" }, ev.relationshipType)),
-    /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-[#94A3B8] bg-[#07111F] p-2.5 rounded-lg border border-[#263B55]" }, ev.notes)
-  ))), /* @__PURE__ */ React.createElement("div", { className: "pt-3 border-t border-[#263B55] flex justify-between items-center text-xs font-mono" }, /* @__PURE__ */ React.createElement("span", { className: "text-[#94A3B8]" }, "Evidence items anchored by cryptographic SHA-256 integrity proofs."), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      onClick: () => navigate("/evidence"),
-      className: "text-[#06B6D4] hover:underline font-semibold"
-    },
-    "Drill down in Evidence Traceability View \u2192"
-  ))));
+
+  return (
+    <div className="space-y-6 max-w-7xl mx-auto font-sans antialiased text-[#f3f4f6]">
+      {/* Safeguard Disclaimer Notice */}
+      <div className="p-3 bg-[#14171c] border border-[#222731] rounded-lg flex items-start gap-2.5 text-xs">
+        <AlertTriangle className="w-4 h-4 text-[#c4a265] shrink-0 mt-0.5" />
+        <div className="text-[11px] text-[#9ca3af] leading-relaxed">
+          <strong className="text-white font-medium">Investigative Lead Safeguard:</strong> AI-resolved linkages represent probabilistic intelligence requiring human validation. System outputs support investigator decision-making and do not constitute judicial determinations.
+        </div>
+      </div>
+
+      {/* Entity Profile Banner */}
+      <div className="bg-[#14171c] border border-[#222731] rounded-xl p-6 shadow-xs relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-lg bg-[#101317] border border-[#222731] flex items-center justify-center text-[#9cae9b] shrink-0 shadow-xs">
+              <Users className="w-7 h-7" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-1.5 font-mono text-xs">
+                <span className="px-2 py-0.5 rounded font-semibold bg-[#18261c] text-[#8fa38d] border border-[#25392b] text-[10px]">
+                  {entity.entityType}
+                </span>
+                <span className="px-2 py-0.5 rounded font-semibold bg-[#2b1719] text-[#dc7869] border border-[#442327] text-[10px]">
+                  {entity.threatTier} SEVERITY
+                </span>
+                <span className="px-2 py-0.5 rounded font-mono text-[#9ca3af] bg-[#101317] border border-[#222731] text-[10px]">
+                  {entity.confidence}% RESOLUTION MATCH
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold text-white tracking-tight">
+                {entity.name}
+              </h1>
+              <div className="text-xs text-[#9ca3af] font-mono mt-1">
+                ID: {entity.id.toUpperCase()} · Active Docket: <strong className="text-white">CASE #IT-2024-884</strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5 font-mono text-xs">
+            <button
+              onClick={() => navigate("/network")}
+              className="h-8.5 px-3.5 rounded-md bg-[#9cae9b] text-[#0d130e] hover:bg-[#8da08c] font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer font-sans"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>Explore in Network Graph</span>
+            </button>
+            <button
+              onClick={() => navigate("/geo")}
+              className="h-8.5 px-3 rounded-md bg-[#101317] border border-[#222731] hover:bg-[#181c22] text-[#d1d5db] font-medium transition-colors flex items-center gap-1.5 cursor-pointer font-sans"
+            >
+              <MapPin className="w-3.5 h-3.5 text-[#8fa38d]" />
+              <span>Surveillance Map</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tab switcher */}
+        <div className="flex items-center gap-1 border-t border-[#222731] mt-6 pt-3 font-mono text-xs">
+          {[
+            { key: "identity", label: "Identity & Dossier", icon: Users },
+            { key: "relationships", label: `Relationships (${entity.relationships.length})`, icon: Share2 },
+            { key: "evidence", label: `Evidence Records (${entity.evidence.length})`, icon: FileText },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-3 py-1.5 rounded-md transition-colors font-medium flex items-center gap-1.5 cursor-pointer ${
+                  isActive
+                    ? "bg-[#181c22] text-[#9cae9b] border border-[#28303e] shadow-xs"
+                    : "text-[#9ca3af] hover:text-white hover:bg-[#101317]"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tab: Identity */}
+      {activeTab === "identity" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Known Aliases */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-3">
+            <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+              <Users className="w-3.5 h-3.5 text-[#9cae9b]" />
+              <span>Known Aliases & Street Monikers</span>
+            </h3>
+            <div className="flex flex-wrap gap-2 pt-1 font-mono text-xs">
+              {entity.identityInfo.knownAliases.map((alias, idx) => (
+                <span
+                  key={idx}
+                  className="px-2.5 py-1 rounded-md bg-[#101317] border border-[#222731] text-[#d1d5db] font-medium"
+                >
+                  {alias}
+                </span>
+              ))}
+            </div>
+            <div className="text-[11px] text-[#606875] font-mono pt-2 border-t border-[#1e232a]">
+              Corroborated across telecom records, deposition logs, and trade registry.
+            </div>
+          </div>
+
+          {/* Phones */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-3">
+            <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+              <Phone className="w-3.5 h-3.5 text-[#7a8ba8]" />
+              <span>Phone Numbers & Subscribed IMEIs</span>
+            </h3>
+            <div className="space-y-2 font-mono text-xs">
+              {entity.identityInfo.phoneNumbers.map((ph, idx) => (
+                <div
+                  key={idx}
+                  className="p-2.5 rounded-md bg-[#101317] border border-[#222731] flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-white font-semibold">{ph.number}</div>
+                    <div className="text-[10px] text-[#606875] mt-0.5">
+                      IMEI: {ph.imei} · {ph.type}
+                    </div>
+                  </div>
+                  <span
+                    className={`text-[10px] px-2 py-0.2 rounded font-medium ${
+                      ph.status === "Active"
+                        ? "bg-[#18261c] text-[#8fa38d] border border-[#25392b]"
+                        : "bg-[#14171c] text-[#606875] border border-[#222731]"
+                    }`}
+                  >
+                    {ph.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Locations */}
+          <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-3">
+            <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 text-[#d97768]" />
+              <span>Surveillance Hotspots & Safehouses</span>
+            </h3>
+            <div className="space-y-2 font-mono text-xs">
+              {entity.identityInfo.locations.map((loc, idx) => (
+                <div
+                  key={idx}
+                  className="p-2.5 rounded-md bg-[#101317] border border-[#222731] space-y-1"
+                >
+                  <div className="text-white font-medium flex items-center justify-between">
+                    <span>{loc.address}</span>
+                    <span className="text-[10px] text-[#9cae9b]">{loc.role}</span>
+                  </div>
+                  <div className="text-[10px] text-[#606875]">Last Sighting: {loc.lastSeen}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Vehicles & Orgs */}
+          <div className="space-y-5">
+            <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-3">
+              <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+                <Car className="w-3.5 h-3.5 text-[#c4a265]" />
+                <span>Associated Vehicles</span>
+              </h3>
+              <div className="space-y-2 font-mono text-xs">
+                {entity.identityInfo.vehicles.map((v, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2.5 rounded-md bg-[#101317] border border-[#222731] flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="text-white font-medium">{v.plate}</div>
+                      <div className="text-[10px] text-[#606875]">{v.model}</div>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.2 rounded bg-[#181c22] text-[#c4a265] border border-[#2a313d]">
+                      {v.tag}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-3">
+              <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider flex items-center gap-2">
+                <Building className="w-3.5 h-3.5 text-[#8fa38d]" />
+                <span>Shell Corporations & Front Companies</span>
+              </h3>
+              <div className="space-y-2 font-mono text-xs">
+                {entity.identityInfo.organizations.map((org, idx) => (
+                  <div
+                    key={idx}
+                    className="p-2.5 rounded-md bg-[#101317] border border-[#222731] flex items-center justify-between"
+                  >
+                    <div>
+                      <div className="text-white font-medium">{org.name}</div>
+                      <div className="text-[10px] text-[#606875]">{org.role}</div>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.2 rounded bg-[#282215] text-[#c4a265] border border-[#3e3420]">
+                      {org.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Relationships */}
+      {activeTab === "relationships" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1e232a] pb-3">
+            <div>
+              <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+                Graph Relationships ({entity.relationships.length} Links)
+              </h3>
+              <p className="text-xs text-[#9ca3af]">
+                Connected individuals, shell organizations, and financial transactions.
+              </p>
+            </div>
+            <span className="text-xs font-mono text-[#8fa38d]">
+              Betweenness Centrality: 0.89
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-sans">
+              <thead className="bg-[#101317] text-[#9ca3af] font-mono text-[10px] uppercase tracking-wider border-b border-[#222731]">
+                <tr>
+                  <th className="p-3 font-semibold">Target Entity</th>
+                  <th className="p-3 font-semibold">Type</th>
+                  <th className="p-3 font-semibold">Relationship Type</th>
+                  <th className="p-3 font-semibold">Confidence</th>
+                  <th className="p-3 font-semibold">Status</th>
+                  <th className="p-3 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#1e232a] text-[#d1d5db]">
+                {entity.relationships.map((rel, idx) => (
+                  <tr key={idx} className="hover:bg-[#181c22] transition-colors">
+                    <td className="p-3 text-white font-medium">{rel.targetName}</td>
+                    <td className="p-3">
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#101317] text-[#9ca3af] border border-[#222731] font-mono">
+                        {rel.targetType}
+                      </span>
+                    </td>
+                    <td className="p-3 text-[#9cae9b] font-mono text-[11px]">
+                      {rel.relationshipType}
+                    </td>
+                    <td className="p-3 text-white font-mono font-medium">{rel.confidence}%</td>
+                    <td className="p-3">
+                      <span
+                        className={`text-[10px] font-mono px-2 py-0.2 rounded font-semibold uppercase ${
+                          rel.status === "CRITICAL"
+                            ? "bg-[#2b1719] text-[#dc7869] border border-[#442327]"
+                            : rel.status === "HIGH"
+                            ? "bg-[#282215] text-[#c4a265] border border-[#3e3420]"
+                            : "bg-[#18261c] text-[#8fa38d] border border-[#25392b]"
+                        }`}
+                      >
+                        {rel.status}
+                      </span>
+                    </td>
+                    <td className="p-3 text-right">
+                      <button
+                        onClick={() => navigate("/network")}
+                        className="text-xs font-mono text-[#9cae9b] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Focus</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Evidence */}
+      {activeTab === "evidence" && (
+        <div className="bg-[#14171c] border border-[#222731] rounded-lg p-5 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1e232a] pb-3">
+            <div>
+              <h3 className="text-xs font-semibold text-white font-mono uppercase tracking-wider">
+                Evidentiary Source Records & Forensic Traces
+              </h3>
+              <p className="text-xs text-[#9ca3af]">
+                Verified source materials anchoring identity linkages.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3 font-sans text-xs">
+            {filteredEvidence.map((ev) => (
+              <div
+                key={ev.id}
+                className="p-4 rounded-lg bg-[#101317] border border-[#222731] hover:border-[#2d3542] transition-all space-y-2"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-[#9cae9b] shrink-0" />
+                    <span className="text-white font-semibold text-xs font-mono">{ev.sourceRecord}</span>
+                  </div>
+                  <div className="flex items-center gap-2 font-mono text-[10px]">
+                    <span className="text-[#606875]">{ev.date}</span>
+                    <span className="px-2 py-0.2 rounded bg-[#18261c] text-[#8fa38d] border border-[#25392b] font-semibold">
+                      {ev.confidence}% CONFIDENCE
+                    </span>
+                  </div>
+                </div>
+                <div className="text-[#d1d5db]">
+                  <span className="text-[#9ca3af]">Link Type: </span>
+                  <span className="text-[#9cae9b] font-medium">{ev.relationshipType}</span>
+                </div>
+                <div className="text-[11px] text-[#9ca3af] bg-[#14171c] p-2.5 rounded border border-[#222731] font-mono">
+                  {ev.notes}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
-var stdin_default = EntityProfilePage;
-export {
-  EntityProfilePage,
-  stdin_default as default
-};
+
+export { EntityProfilePage };
+export default EntityProfilePage;

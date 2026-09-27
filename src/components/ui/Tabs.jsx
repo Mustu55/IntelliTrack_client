@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { cn } from "../../utils/cn";
-const TabsContext = createContext(void 0);
+
+const TabsContext = createContext(undefined);
+
 const Tabs = ({
   defaultValue,
   value,
@@ -9,28 +11,34 @@ const Tabs = ({
   className
 }) => {
   const [tab, setTab] = useState(defaultValue);
-  const activeTab = value !== void 0 ? value : tab;
+  const activeTab = value !== undefined ? value : tab;
   const setActiveTab = (val) => {
-    if (value === void 0) setTab(val);
+    if (value === undefined) setTab(val);
     onValueChange?.(val);
   };
-  return /* @__PURE__ */ React.createElement(TabsContext.Provider, { value: { activeTab, setActiveTab } }, /* @__PURE__ */ React.createElement("div", { className: cn("w-full", className) }, children));
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div className={cn("w-full", className)}>{children}</div>
+    </TabsContext.Provider>
+  );
 };
+
 const TabsList = ({
   className,
   children,
   ...props
-}) => /* @__PURE__ */ React.createElement(
-  "div",
-  {
-    className: cn(
-      "inline-flex items-center gap-1 bg-surface-container-high/60 p-1 rounded border border-outline-variant/30 select-none",
+}) => (
+  <div
+    className={cn(
+      "inline-flex items-center gap-1.5 bg-[#101317] p-1 rounded-lg border border-[#222731] select-none",
       className
-    ),
-    ...props
-  },
-  children
+    )}
+    {...props}
+  >
+    {children}
+  </div>
 );
+
 const TabsTrigger = ({
   value,
   className,
@@ -40,21 +48,24 @@ const TabsTrigger = ({
   const context = useContext(TabsContext);
   if (!context) throw new Error("TabsTrigger must be used within Tabs");
   const isActive = context.activeTab === value;
-  return /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      type: "button",
-      onClick: () => context.setActiveTab(value),
-      className: cn(
-        "px-3 py-1 font-label-sm text-label-sm uppercase tracking-wider font-semibold rounded transition-all duration-150",
-        isActive ? "bg-surface-container-lowest text-primary shadow-xs" : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low/50",
+  return (
+    <button
+      type="button"
+      onClick={() => context.setActiveTab(value)}
+      className={cn(
+        "px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-wider rounded-md transition-all duration-150 cursor-pointer",
+        isActive
+          ? "bg-[#181c22] text-[#9cae9b] border border-[#28303e] shadow-xs font-semibold"
+          : "text-[#9ca3af] hover:text-[#f3f4f6] hover:bg-[#14171c]",
         className
-      ),
-      ...props
-    },
-    children
+      )}
+      {...props}
+    >
+      {children}
+    </button>
   );
 };
+
 const TabsContent = ({
   value,
   className,
@@ -64,11 +75,9 @@ const TabsContent = ({
   const context = useContext(TabsContext);
   if (!context) throw new Error("TabsContent must be used within Tabs");
   if (context.activeTab !== value) return null;
-  return /* @__PURE__ */ React.createElement("div", { className: cn("mt-3 outline-none", className), ...props }, children);
+  return <div className={cn("mt-4 outline-none", className)} {...props}>{children}</div>;
 };
-export {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger
-};
+
+export { Tabs, TabsContent, TabsList, TabsTrigger };
+export default Tabs;
+
